@@ -1,6 +1,7 @@
 package com.github.percivalgebashe.assignment_5.userDetails.impl;
 
 import com.github.percivalgebashe.assignment_5.entity.Role;
+import com.github.percivalgebashe.assignment_5.entity.Roles;
 import com.github.percivalgebashe.assignment_5.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,10 +20,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Role> roles = user.getRoles();
+        Set<Roles> roles = user.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        for(Role role : roles){
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        for(Roles role : roles){
+            authorities.add(new SimpleGrantedAuthority(role.name()));
         }
         return authorities;
     }

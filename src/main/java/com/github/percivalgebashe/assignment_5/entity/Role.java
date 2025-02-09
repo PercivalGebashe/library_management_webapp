@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -19,6 +21,7 @@ public class Role implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
-    private String name;
+    private Roles name;
 }

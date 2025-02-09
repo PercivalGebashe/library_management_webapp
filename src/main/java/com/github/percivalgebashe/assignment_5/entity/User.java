@@ -20,14 +20,15 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true)
     private String username;
 
+
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "roles_id")})
-    private Set<Role> roles;
+    private Set<Roles> roles;
 
     private boolean enabled;
 }
