@@ -1,12 +1,11 @@
 package com.github.percivalgebashe.assignment_5.entity;
 
+import com.github.percivalgebashe.assignment_5.enums.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
@@ -24,4 +23,5 @@ public class Role implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private Roles name;
+
 }

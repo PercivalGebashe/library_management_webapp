@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,7 +29,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_roles",
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "roles_id")})
-    private Set<Roles> roles;
+    private Set<Role> roles = new HashSet<>();
 
     private boolean enabled;
 }
