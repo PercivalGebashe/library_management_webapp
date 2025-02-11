@@ -9,21 +9,16 @@ import lombok.Setter;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "genre")
+@Table(name = "genres")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Setter @Getter
 public class Genre implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
-
 }

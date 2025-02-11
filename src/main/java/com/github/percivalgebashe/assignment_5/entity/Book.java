@@ -1,6 +1,7 @@
 package com.github.percivalgebashe.assignment_5.entity;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long book_id;
+    private Long id;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Author> authors;
@@ -29,15 +30,25 @@ public class Book implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date publishedDate;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Publisher> publishers;
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false, unique = true)
     private String isbn;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(
+            name = "book_genres",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
     private Set<Genre> genres;
+
+    @ManyToMany
+    @JoinTable(
+            name = "book_publishers",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "publisher_id")
+    )
+    private Set<Publisher> publishers;
 }
