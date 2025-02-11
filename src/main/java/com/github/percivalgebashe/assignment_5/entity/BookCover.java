@@ -6,20 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Entity
-@Table(name = "authors")
+@Table(name = "book_covers")
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
-public class Author implements Serializable {
+@Setter
+public class BookCover {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private Long bookId;
+
     @Column(nullable = false)
-    private String name;
+    private String imagePath;
 }

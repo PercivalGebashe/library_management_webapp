@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "publishers")
+@Table(name = "book_publishers")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter @Getter

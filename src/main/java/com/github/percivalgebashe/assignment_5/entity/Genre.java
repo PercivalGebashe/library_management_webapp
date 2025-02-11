@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "genres")
+@Table(name = "book_genres")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter @Getter
