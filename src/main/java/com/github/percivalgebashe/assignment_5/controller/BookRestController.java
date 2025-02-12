@@ -33,7 +33,7 @@ public class BookRestController {
         return bookService.findBookByFilter(filter, Pageable.ofSize(10));
     }
 
-    @GetMapping(value = "/addbook", consumes = "application/json")
+    @PostMapping(value = "/addbook", consumes = "application/json")
     public ResponseEntity<Book> addBook(@RequestBody BookDTO book) {
         Book bookEntity = bookService.save(book);
 
@@ -41,5 +41,14 @@ public class BookRestController {
             return new ResponseEntity<>(bookEntity, HttpStatus.CREATED);
         }else
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "/edit", consumes = "application/json")
+    public ResponseEntity<Book> editBook(@RequestBody BookDTO book) {
+        Book bookEntity = bookService.save(book);
+        if (null != bookEntity) {
+            return new ResponseEntity<>(bookEntity, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

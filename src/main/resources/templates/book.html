@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Management</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<h1>Library Management</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+        <th>Publisher</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}" th:attr="data-id=${book.isbn}" onclick="openEditModal(this)">
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.publisher}"></td>
+        <td><button>Edit</button></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Edit Book</h2>
+        <form id="editForm">
+            <label>Title:</label>
+            <input type="text" id="title" name="title">
+            <span class="error" id="titleError"></span>
+
+            <label>Author:</label>
+            <input type="text" id="author" name="author">
+            <span class="error" id="authorError"></span>
+
+            <label>ISBN:</label>
+            <input type="text" id="isbn" name="isbn" readonly>
+            <span class="error" id="isbnError"></span>
+
+            <label>Publisher:</label>
+            <input type="text" id="publisher" name="publisher">
+            <span class="error" id="publisherError"></span>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<script src="/js/scripts.js"></script>
+</body>
+</html>
