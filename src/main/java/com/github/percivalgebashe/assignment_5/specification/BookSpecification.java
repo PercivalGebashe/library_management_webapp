@@ -15,9 +15,13 @@ public class BookSpecification {
                 predicate = criteriaBuilder.and(predicate,
                         criteriaBuilder.like(root.get("title"), "%" + filter.getTitle() + "%"));
             }
-            if (filter.getPublishedDate() != null) {
+            if (filter.getPublishedDateStart() != null) {
                 predicate = criteriaBuilder.and(predicate,
-                        criteriaBuilder.like(root.get("publishedDate"), "%" + filter.getPublishedDate() + "%"));
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("publishedDate"), filter.getPublishedDateStart()));
+            }
+            if (filter.getPublishedDateEnd() != null) {
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.lessThanOrEqualTo(root.get("publishedDate"), filter.getPublishedDateEnd()));
             }
             if (filter.getAuthors() != null && !filter.getAuthors().isEmpty()) {
                 predicate = criteriaBuilder.and(predicate,
