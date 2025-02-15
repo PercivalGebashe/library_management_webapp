@@ -19,7 +19,7 @@ public class UserDTO {
     private String username;
     private String password;
     private boolean enabled;
-    private Set<Roles> roles;
+    private Role role;
 
     public User toEntity() {
         User userEntity = new User();
@@ -27,10 +27,7 @@ public class UserDTO {
         userEntity.setUsername(username);
         userEntity.setPassword(password);
         userEntity.setEnabled(enabled);
-
-        userEntity.setRoles(roles.stream()
-                .map(roleEnum -> new Role(null, roleEnum))
-                .collect(Collectors.toSet()));
+        userEntity.setRole(role);
 
         return userEntity;
     }

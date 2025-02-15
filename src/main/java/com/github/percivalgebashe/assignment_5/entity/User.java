@@ -1,5 +1,6 @@
 package com.github.percivalgebashe.assignment_5.entity;
 
+import com.github.percivalgebashe.assignment_5.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,11 +26,11 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "roles_id")})
-    private Set<Role> roles = new HashSet<>();
+    private Role role;
 
     private boolean enabled;
 }
