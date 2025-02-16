@@ -4,7 +4,7 @@ import com.github.percivalgebashe.assignment_5.enums.Roles;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtAuthenticationFilter;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtAuthorizationFilter;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
-import jakarta.servlet.Filter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +26,7 @@ public class SecurityConfiguration {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
+    @Autowired
     public SecurityConfiguration(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
@@ -43,7 +44,7 @@ public class SecurityConfiguration {
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore((Filter) new JwtAuthenticationFilter(authenticationManager, jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
