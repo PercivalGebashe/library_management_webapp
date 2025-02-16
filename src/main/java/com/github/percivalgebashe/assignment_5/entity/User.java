@@ -26,11 +26,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-        joinColumns = {@JoinColumn(name = "user_id")},
-        inverseJoinColumns = {@JoinColumn(name = "roles_id")})
-    private Role role;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
     private boolean enabled;
 }

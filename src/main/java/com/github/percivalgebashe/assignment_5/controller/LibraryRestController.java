@@ -1,50 +1,75 @@
 package com.github.percivalgebashe.assignment_5.controller;
 
 import com.github.percivalgebashe.assignment_5.dto.UserDTO;
-import com.github.percivalgebashe.assignment_5.entity.User;
-import com.github.percivalgebashe.assignment_5.service.impl.UserServiceImpl;
+import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
+import com.github.percivalgebashe.assignment_5.service.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @EnableMethodSecurity
 @RestController
 @RequestMapping("/api/v1/library")
 public class LibraryRestController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public LibraryRestController(UserServiceImpl userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public LibraryRestController(UserService userService,
+                                 AuthenticationManager authenticationManager,
+                                 UserDetailsService userDetailsService,
+                                 JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping(value = "/admin/add", consumes = "application/json")
     public ResponseEntity<String> addUser(@RequestBody UserDTO userDTO) {
-        System.out.println("Adding user: " + userDTO);
-        Optional<User> userOptional = userServiceImpl.registerUser(userDTO.toEntity());
-
-        return userOptional
-                .map(value -> ResponseEntity.ok("User added: " + value))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        try {
+            userService.registerUser(userDTO);
+            return ResponseEntity.ok("User added successfully");
+        }catch(BadRequestException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/user/books/all")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> getAllBooks() {
-        return ResponseEntity.ok("All books available");
+        try {
+            return ResponseEntity.ok("All books available");
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @PostMapping(value = "/admin/login", consumes = "application/json")
     public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
-//        try {
-//
-//        }
-        return ResponseEntity.ok("Login successful");
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
+            if (authentication.isAuthenticated()) {
+                String token = jwtUtil.generateToken(userDetailsService.loadUserByUsername(userDTO.getUsername()));
+                return ResponseEntity.ok(token);
+            }else {
+                return ResponseEntity.badRequest().body("Invalid username or password");
+            }
+        }catch (UsernameNotFoundException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

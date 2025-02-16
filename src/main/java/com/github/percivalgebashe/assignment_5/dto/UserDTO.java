@@ -19,7 +19,7 @@ public class UserDTO {
     private String username;
     private String password;
     private boolean enabled;
-    private Role role;
+    private Roles role;
 
     public User toEntity() {
         User userEntity = new User();

@@ -1,0 +1,54 @@
+package com.github.percivalgebashe.assignment_5.security.jwt;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.io.IOException;
+
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+        super(authenticationManager);
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        String header = request.getHeader("Authorization");
+        if (null == header || !header.startsWith("Bearer ")){
+            chain.doFilter(request,response);
+            return;
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(request);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        chain.doFilter(request,response);
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        UsernamePasswordAuthenticationToken authenticationToken = null;
+        if(null != token && token.startsWith("Bearer ")){
+            String username = jwtUtil.extractUsernameFromToken(token.replace("Bearer ", ""));
+            if (username != null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtUtil.validateToken(token.replace("Bearer ", ""), userDetails)){
+                    authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                }
+            }
+        }
+        return authenticationToken;
+    }
+}
