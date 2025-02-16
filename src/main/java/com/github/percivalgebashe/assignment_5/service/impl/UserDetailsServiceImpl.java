@@ -21,13 +21,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .ifPresent(user -> {
-                    return User.builder()
-                            .username(user.getUsername())
-                            .password(user.getPassword())
-                            .roles(user.getRole().name())
-                            .build();
-                });
-        throw new UsernameNotFoundException("User not found: " + username);
+                .map(user -> User.builder()
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .roles(user.getRole().name())
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
     }
 }
