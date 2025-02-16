@@ -38,17 +38,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        UsernamePasswordAuthenticationToken authenticationToken = null;
-        if(null != token && token.startsWith("Bearer ")){
-            String username = jwtUtil.extractUsernameFromToken(token.replace("Bearer ", ""));
-            if (username != null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtUtil.validateToken(token.replace("Bearer ", ""), userDetails)){
-                    authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                }
-            }
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            throw new NullPointerException("Authorization header is null");
         }
-        return authenticationToken;
+
+        String token = header.replace("Bearer ", "");
+        String username = jwtUtil.extractUsernameFromToken(token);
+
+        if (username == null) {
+            return null;
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return jwtUtil.validateToken(token, userDetails)
+                ? new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+                : null;
     }
+
 }
