@@ -1,13 +1,9 @@
 package com.github.percivalgebashe.assignment_5.dto;
 
-import com.github.percivalgebashe.assignment_5.entity.Role;
 import com.github.percivalgebashe.assignment_5.entity.User;
 import com.github.percivalgebashe.assignment_5.enums.Roles;
 import lombok.*;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter @Setter
 @ToString

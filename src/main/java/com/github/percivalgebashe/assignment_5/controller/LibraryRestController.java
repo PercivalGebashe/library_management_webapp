@@ -55,21 +55,4 @@ public class LibraryRestController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-
-    @PostMapping(value = "/admin/login", consumes = "application/json")
-    public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
-            if (authentication.isAuthenticated()) {
-                String token = jwtUtil.generateToken(userDetailsService.loadUserByUsername(userDTO.getUsername()));
-                return ResponseEntity.ok(token);
-            }else {
-                return ResponseEntity.badRequest().body("Invalid username or password");
-            }
-        }catch (UsernameNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
 }
