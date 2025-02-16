@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,13 +38,16 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole(Roles.ADMIN.name()) // Ensure "ADMIN" is prefixed with "ROLE_" in your enum
-                        .requestMatchers("/user/**").hasRole(Roles.USER.name())
+                        .requestMatchers("/css/login.css").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()  // Allow all auth endpoints
+                        .requestMatchers("/api/v1/library/admin/**").hasRole(Roles.ADMIN.name()) // Ensure "ADMIN" is prefixed with "ROLE_" in your enum
+                        .requestMatchers("/api/v1/library/user/**").hasRole(Roles.USER.name())
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(userDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 

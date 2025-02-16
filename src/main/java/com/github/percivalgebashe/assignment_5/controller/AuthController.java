@@ -3,6 +3,7 @@ package com.github.percivalgebashe.assignment_5.controller;
 import com.github.percivalgebashe.assignment_5.dto.UserDTO;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
 import com.github.percivalgebashe.assignment_5.service.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +38,7 @@ public class AuthController {
 
     }
 
-    @PostMapping(value = "/admin/login", consumes = "application/json")
+    @PostMapping(value = "/login", consumes = "application/json")
     public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -49,6 +50,16 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Invalid username or password");
             }
         }catch (UsernameNotFoundException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/admin/add", consumes = "application/json")
+    public ResponseEntity<String> addUser(@RequestBody UserDTO userDTO) {
+        try {
+            userService.registerUser(userDTO);
+            return ResponseEntity.ok("User added successfully");
+        }catch(BadRequestException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
