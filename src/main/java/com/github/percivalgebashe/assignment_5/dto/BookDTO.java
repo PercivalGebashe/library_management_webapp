@@ -1,31 +1,21 @@
 package com.github.percivalgebashe.assignment_5.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@Data
+@Builder
 public class BookDTO {
-    private Long book_id;
-
-    private List<Object> authors;
-
+    private String id;
+    private List<AuthorDTO> authors;
     private String title;
-
     private LocalDate publishedDate;
-
-    private Set<Object> publishers;
-
     private String description;
-
     private String isbn;
-
-    private Set<Object> genres;
+    private String genres;
+    private Set<PublisherDTO> publishers;
 }
