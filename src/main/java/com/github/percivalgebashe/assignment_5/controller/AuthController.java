@@ -1,10 +1,14 @@
 package com.github.percivalgebashe.assignment_5.controller;
 
 import com.github.percivalgebashe.assignment_5.dto.UserDTO;
+import com.github.percivalgebashe.assignment_5.record.LoginForm;
+import com.github.percivalgebashe.assignment_5.security.jwt.JwtAuthenticationFilter;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
 import com.github.percivalgebashe.assignment_5.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,40 +20,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     public AuthController(UserService userService,
                           AuthenticationManager authenticationManager,
                           UserDetailsService userDetailsService,
-                          JwtUtil jwtUtil) {
+                          JwtUtil jwtUtil,
+                          JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
-
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    @PostMapping(value = "/login", consumes = "application/json")
-    public ResponseEntity<String> login(@RequestBody UserDTO userDTO) {
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<String> login(@RequestBody LoginForm loginForm, HttpServletResponse response) {
         try {
+            System.out.println("Authenticating");
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
+                    new UsernamePasswordAuthenticationToken(loginForm.username(), loginForm.password()));
+
             if (authentication.isAuthenticated()) {
-                String token = jwtUtil.generateToken(userDetailsService.loadUserByUsername(userDTO.getUsername()));
-                return ResponseEntity.ok(token);
-            }else {
-                return ResponseEntity.badRequest().body("Invalid username or password");
+                System.out.println("login successful".trim());
+                // Generate JWT token
+                String token = jwtUtil.generateToken(userDetailsService.loadUserByUsername(loginForm.username()));
+                System.out.println("Token: " + token);
+
+                // Add the JWT token to the cookie
+                jwtAuthenticationFilter.addJwtToCookie(response, token);
+                System.out.println("Added added token to cookies");
+
+                // Return a success response, but no token in the body
+//                System.out.println("Returning response and redirecting");
+//                ResponseEntity.status(HttpStatus.FOUND);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body("User logged in");
+            } else {
+                System.out.println("login failed".trim());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
             }
-        }catch (UsernameNotFoundException e){
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -59,7 +82,7 @@ public class AuthController {
         try {
             userService.registerUser(userDTO);
             return ResponseEntity.ok("User added successfully");
-        }catch(BadRequestException e){
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

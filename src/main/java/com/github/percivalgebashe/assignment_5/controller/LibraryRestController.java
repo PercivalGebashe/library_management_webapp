@@ -33,7 +33,7 @@ public class LibraryRestController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/user/books/all")
+    @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> getAllBooks() {
         try {

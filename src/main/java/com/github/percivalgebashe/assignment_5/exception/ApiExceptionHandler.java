@@ -19,4 +19,13 @@ public class ApiExceptionHandler {
                 ex.getMessage(),
                 "Resource Not Found");
     }
+
+    @ExceptionHandler(value = NoContentException.class)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public ErrorMessage noContent(NoContentException ex) {
+        return new ErrorMessage(HttpStatus.NOT_FOUND.value(),
+                new Date(),
+                ex.getMessage(),
+                "No Content Found");
+    }
 }
