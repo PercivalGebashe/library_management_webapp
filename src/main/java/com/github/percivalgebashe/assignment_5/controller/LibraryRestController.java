@@ -1,10 +1,12 @@
 package com.github.percivalgebashe.assignment_5.controller;
 
+import com.github.percivalgebashe.assignment_5.dto.AuthorDTO;
 import com.github.percivalgebashe.assignment_5.dto.BookDTO;
 import com.github.percivalgebashe.assignment_5.dto.PaginatedResponse;
 import com.github.percivalgebashe.assignment_5.exception.NoContentException;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
 import com.github.percivalgebashe.assignment_5.service.UserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -96,6 +98,31 @@ public class LibraryRestController {
             return ResponseEntity.ok(book);
         }catch (NoContentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping(value = "/author", consumes = "application/json")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<BookDTO> addAuthor(@RequestBody BookDTO bookDTO) {
+        try {
+            WebClient client = WebClient.builder().build();
+
+            AuthorDTO authorDTO = Objects.requireNonNull(client.post()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/author")
+                            .build())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .bodyValue(bookDTO)
+                    .retrieve()
+                    .toEntity(AuthorDTO.class)
+                    .block()).getBody();
+            return ResponseEntity.ok(bookDTO);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }
