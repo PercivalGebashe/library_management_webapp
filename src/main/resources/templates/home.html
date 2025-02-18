@@ -18,8 +18,8 @@
         <th>Description</th>
         <th>Genres</th>
         <th>Publish Date</th>
-        <th>ISBN</th>
         <th>Publisher</th>
+        <th>ISBN</th>
         <th>Action</th>
     </tr>
     </thead>
@@ -49,17 +49,17 @@
             <input type="text" id="title" name="title">
             <span class="error" id="titleError"></span>
 
-            <label>Description:</label>
-            <input type="text" id="description" name="description">
-            <span class="error" id="descriptionError"></span>
-
             <label>Author(s):</label>
             <input type="text" id="authors" name="authors">
             <span class="error" id="authorError"></span>
 
-            <label>ISBN:</label>
-            <input type="text" id="isbn" name="isbn" readonly>
-            <span class="error" id="isbnError"></span>
+            <label>Description:</label>
+            <input type="text" id="description" name="description">
+            <span class="error" id="descriptionError"></span>
+
+            <label>Genre(s):</label>
+            <input type="text" id="genres" name="genres">
+            <span class="error" id="genreError"></span>
 
             <label>Publish Date:</label>
             <input type="date" id="publishedDate" name="publishedDate" readonly>
@@ -69,9 +69,9 @@
             <input type="text" id="publishers" name="publishers">
             <span class="error" id="publisherError"></span>
 
-            <label>Genre(s):</label>
-            <input type="text" id="genres" name="genres">
-            <span class="error" id="genreError"></span>
+            <label>ISBN:</label>
+            <input type="text" id="isbn" name="isbn" readonly>
+            <span class="error" id="isbnError"></span>
 
             <button type="submit">Save</button>
         </form>

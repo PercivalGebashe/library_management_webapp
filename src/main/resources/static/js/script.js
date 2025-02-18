@@ -31,8 +31,8 @@ function loadBooks(page = 0) {
                     <td>${book.description}</td>
                     <td>${book.genres}</td>
                     <td>${book.publishedDate}</td>
-                    <td>${book.isbn}</td>
                     <td>${book.publishers}</td>
+                    <td>${book.isbn}</td>
                     <td><button class="edit-btn">Edit</button></td>
                 </tr>`;
                 tableBody.appendChild(row);
@@ -70,7 +70,7 @@ function openEditModal(row) {
     document.getElementById("description").value = cells[3].innerText;
     document.getElementById("genres").value = cells[4].innerText;
     document.getElementById("publishedDate").value = cells[5].innerText;
-    document.getElementById("publisher").value = cells[6].innerText;
+    document.getElementById("publishers").value = cells[6].innerText;
     document.getElementById("isbn").value = cells[7].innerText; // Read-only
 
     modal.style.display = "block";
@@ -123,8 +123,8 @@ function validateForm() {
     let description = document.getElementById("description").value.trim();
     let genres = document.getElementById("genre").value.trim();
     let publishedDate = document.getElementById("publishedDate").value.trim();
+    let publishers = document.getElementById("publishers").value.trim();
     let isbn = document.getElementById("isbn").value.trim();
-    let publisher = document.getElementById("publisher").value.trim();
 
     let errors = {};
 
@@ -134,8 +134,8 @@ function validateForm() {
     if (!description) errors.description = "Description is required.";
     if (!genres) errors.genres = "Genre is required.";
     if (!publishedDate) errors.publishedDate = "PublishedDate is required.";
+    if (!publishers) errors.publisher = "Publisher is required.";
     if (!isbn.match(/^\d{10}(\d{3})?$/)) errors.isbn = "Invalid ISBN (must be 10 or 13 digits).";
-    if (!publisher) errors.publisher = "Publisher is required.";
 
     document.getElementById("idError").innerText = errors.title || "";
     document.getElementById("titleError").innerText = errors.title || "";
@@ -143,8 +143,8 @@ function validateForm() {
     document.getElementById("descriptionError").innerText = errors.isbn || "";
     document.getElementById("genresError").innerText = errors.publisher || "";
     document.getElementById("publishedDateError").innerText = errors.author || "";
-    document.getElementById("isbnError").innerText = errors.isbn || "";
     document.getElementById("publisherError").innerText = errors.publisher || "";
+    document.getElementById("isbnError").innerText = errors.isbn || "";
 
     return Object.keys(errors).length === 0;
 }
