@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -17,5 +17,14 @@ public class BookDTO {
     private String description;
     private String isbn;
     private String genres;
-    private Set<PublisherDTO> publishers;
+    private String publishers;
+    public void generateBookId() {
+        if (authors != null && !authors.isEmpty()) {
+            String authorNames = authors.stream()
+                    .map(AuthorDTO::getName)
+                    .collect(Collectors.joining("_"));
+
+             id = authorNames.replaceAll("\\s+", "") + "_" + title.replaceAll("\\s+", "");
+        }
+    }
 }
