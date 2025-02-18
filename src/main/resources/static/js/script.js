@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ✅ Fetch books from the REST API and populate the table dynamically
 function loadBooks() {
-    fetch("/api/v1/library") // Calls the REST API we set up
+    fetch("http://127.0.0.1:8081/api/v1/library") // Calls the REST API we set up
         .then(response => response.json())
         .then(data => {
             const tableBody = document.querySelector("tbody");

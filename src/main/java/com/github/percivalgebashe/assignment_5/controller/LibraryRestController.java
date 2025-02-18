@@ -55,7 +55,7 @@ public class LibraryRestController {
                     .toEntityList(BookDTO.class)
                     .block()).getBody();
 
-            System.out.println(booksList);
+            System.out.println("Returned from server" + booksList);
             model.addAttribute("books", booksList);
             return ResponseEntity.status(HttpStatus.OK).build();
         }catch (NoContentException e){
