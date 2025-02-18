@@ -2,8 +2,8 @@ package com.github.percivalgebashe.assignment_5.security.spring;
 
 import com.github.percivalgebashe.assignment_5.enums.Roles;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtAuthenticationFilter;
-import com.github.percivalgebashe.assignment_5.security.jwt.JwtAuthorizationFilter;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
+import com.github.percivalgebashe.assignment_5.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,35 +22,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfiguration  extends WebSecurityConfiguration {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final WebUtils webUtils;
 
     @Autowired
-    public SecurityConfiguration(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public SecurityConfiguration(JwtUtil jwtUtil, UserDetailsService userDetailsService, WebUtils webUtils) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.webUtils = webUtils;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable) // Disable form login for JWT authentication
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/home").permitAll()
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/js/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()  // Allow all auth endpoints
-                        .requestMatchers("/api/v1/library/admin/**").hasRole(Roles.ADMIN.name())
+                        .requestMatchers(
+                                "/login",
+                                "/home",
+                                "/css/**",
+                                "/js/**",
+                                "/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/library/**").hasRole(Roles.ADMIN.name())
                         .requestMatchers("/api/v1/library/user/**").hasRole(Roles.USER.name())
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable) // Disable form login for JWT authentication
-                .addFilterBefore(new JwtAuthenticationFilter(userDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(userDetailsService, jwtUtil),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
