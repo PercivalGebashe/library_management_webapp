@@ -1,7 +1,6 @@
 package com.github.percivalgebashe.assignment_5.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,14 +8,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -24,6 +20,7 @@ import java.util.function.Function;
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
+
     @Value("${jwt.token.lifespan}")
     private long lifespan;
 
@@ -33,6 +30,7 @@ public class JwtUtil {
 
     public String generateToken(UserDetails user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", user.getAuthorities()); // Store roles in JWT
         return createToken(claims, user.getUsername());
     }
 
@@ -42,21 +40,26 @@ public class JwtUtil {
                 .subject(subject)
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plusMillis(lifespan)))
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (JwtException e) {
+            System.out.println("Invalid JWT: " + e.getMessage());
+            return null;
+        }
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        Claims claims = extractAllClaims(token);
+        return claims != null ? claimsResolver.apply(claims) : null;
     }
 
     public String extractUsernameFromToken(String token) {
@@ -68,11 +71,21 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).after(Date.from(Instant.now()));
+        Date expiration = extractExpiration(token);
+        return expiration != null && expiration.before(Date.from(Instant.now()));
     }
 
-    public boolean validateToken(String token, UserDetails UserDetails) {
-        final String username = extractUsernameFromToken(token);
-        return username.equals(UserDetails.getUsername()) && !isTokenExpired(token);
+    public boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            final String username = extractUsernameFromToken(token);
+            return username != null
+                    && username.equals(userDetails.getUsername())
+                    && !isTokenExpired(token);
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token expired: " + e.getMessage());
+        } catch (JwtException e) {
+            System.out.println("Invalid token: " + e.getMessage());
+        }
+        return false;
     }
 }
