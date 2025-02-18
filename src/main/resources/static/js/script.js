@@ -3,15 +3,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("editForm").addEventListener("submit", handleSubmit);
 });
 
-// ✅ Fetch books from the REST API and populate the table dynamically
-function loadBooks() {
-    fetch("http://127.0.0.1:8081/api/v1/library") // Calls the REST API we set up
+const apiUrl = "http://127.0.0.1:8081/api/v1/library";
+let currentPage = 0;
+const pageSize = 10; // Adjust if needed
+
+// ✅ Fetch books from API and populate table
+function loadBooks(page = 0) {
+    fetch(`${apiUrl}?page=${page}&size=${pageSize}`)
         .then(response => response.json())
         .then(data => {
-            const tableBody = document.querySelector("tbody");
-            tableBody.innerHTML = ""; // Clear old rows
+            if (!data.content) {
+                console.error("Unexpected API response:", data);
+                return;
+            }
 
-            data.forEach(book => {
+            const tableBody = document.querySelector("tbody");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            data.content.forEach(book => {
                 const row = `<tr data-id="${book.isbn}" onclick="openEditModal(this)">
                     <td>${book.title}</td>
                     <td>${book.authors}</td>
@@ -21,8 +30,19 @@ function loadBooks() {
                 </tr>`;
                 tableBody.innerHTML += row;
             });
+
+            updatePaginationControls(data);
         })
         .catch(error => console.error("Error loading books:", error));
+}
+
+// ✅ Update pagination controls
+function updatePaginationControls(data) {
+    document.getElementById("pagination").innerHTML = `
+        <button ${data.number === 0 ? "disabled" : ""} onclick="loadBooks(${data.number - 1})">Previous</button>
+        <span>Page ${data.number + 1} of ${data.totalPages}</span>
+        <button ${data.number + 1 >= data.totalPages ? "disabled" : ""} onclick="loadBooks(${data.number + 1})">Next</button>
+    `;
 }
 
 // ✅ Open the edit modal and populate fields

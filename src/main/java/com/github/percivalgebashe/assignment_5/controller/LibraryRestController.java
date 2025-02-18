@@ -5,6 +5,9 @@ import com.github.percivalgebashe.assignment_5.exception.NoContentException;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
 import com.github.percivalgebashe.assignment_5.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -44,22 +48,35 @@ public class LibraryRestController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<Objects> getAllBooks(Model model) {
+    public ResponseEntity<Void> getAllBooks(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size,
+                                            Model model) {
         try {
-            WebClient client = WebClient.create();
+            WebClient client = WebClient.builder().build();
 
-            List<BookDTO> booksList = Objects.requireNonNull(client.get()
-                    .uri("http://localhost:8082/api/v1/books")
-                    .accept(MediaType.parseMediaType("application/json"))
+            PageImpl<BookDTO> booksPage = Objects.requireNonNull(client.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/books")
+                            .queryParam("page", page)
+                            .queryParam("size", size)
+                            .build())
+                    .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
-                    .toEntityList(BookDTO.class)
+                    .toEntity(new ParameterizedTypeReference<PageImpl<BookDTO>>() {})
                     .block()).getBody();
 
-            System.out.println("Returned from server" + booksList);
-            model.addAttribute("books", booksList);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        }catch (NoContentException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            model.addAttribute("books", booksPage.getContent()); // List for table
+            model.addAttribute("currentPage", booksPage.getNumber());
+            model.addAttribute("totalPages", booksPage.getTotalPages());
+            model.addAttribute("totalElements", booksPage.getTotalElements());
+            model.addAttribute("size", booksPage.getSize());
+
+            return ResponseEntity.ok().build();
+        } catch (NoContentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }
