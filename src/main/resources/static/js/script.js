@@ -21,16 +21,30 @@ function loadBooks(page = 0) {
             tableBody.innerHTML = ""; // Clear existing rows
 
             data.content.forEach(book => {
-                const row = `<tr data-id="${book.isbn}" onclick="openEditModal(this)">
+                const row = document.createElement("tr");
+                row.dataset.id = book.isbn; // Store ISBN for reference
+                // const row = `<!--<tr data-id="${book.isbn}" onclick="openEditModal(this)">-->
+                row.innerHTML = `
+                    <td>${book.bookId}</td>
                     <td>${book.title}</td>
                     <td>${book.authors}</td>
+                    <td>${book.description}</td>
+                    <td>${book.genres}</td>
+                    <td>${book.publishedDate}</td>
                     <td>${book.isbn}</td>
                     <td>${book.publishers}</td>
-                    <td><button>Edit</button></td>
+                    <td><button class="edit-btn">Edit</button></td>
                 </tr>`;
-                tableBody.innerHTML += row;
+                tableBody.appendChild(row);
             });
 
+            // ✅ Add event listener to all buttons AFTER they are added to the DOM
+            document.querySelectorAll(".edit-btn").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.stopPropagation(); // Prevents the row click event from firing
+                    openEditModal(this.closest("tr")); // Pass the parent row
+                });
+            });
             updatePaginationControls(data);
         })
         .catch(error => console.error("Error loading books:", error));
@@ -50,10 +64,14 @@ function openEditModal(row) {
     let modal = document.getElementById("editModal");
     let cells = row.getElementsByTagName("td");
 
-    document.getElementById("title").value = cells[0].innerText;
-    document.getElementById("author").value = cells[1].innerText;
-    document.getElementById("isbn").value = cells[2].innerText; // Read-only
-    document.getElementById("publisher").value = cells[3].innerText;
+    document.getElementById("id").value = cells[0].innerText // Read-only
+    document.getElementById("title").value = cells[1].innerText;
+    document.getElementById("authors").value = cells[2].innerText;
+    document.getElementById("description").value = cells[3].innerText;
+    document.getElementById("genres").value = cells[4].innerText;
+    document.getElementById("publishedDate").value = cells[5].innerText;
+    document.getElementById("publisher").value = cells[6].innerText;
+    document.getElementById("isbn").value = cells[7].innerText; // Read-only
 
     modal.style.display = "block";
 }
@@ -71,13 +89,17 @@ function handleSubmit(event) {
     if (!isValid) return;
 
     let formData = {
+        bookId: document.getElementById("id").value,
         title: document.getElementById("title").value,
-        author: document.getElementById("author").value,
+        author: document.getElementById("authors").value,
+        description: document.getElementById("description").value,
+        genres: document.getElementById("genre").value,
+        publishedDate: document.getElementById("publishedDate").value,
+        publishers: document.getElementById("publishers").value,
         isbn: document.getElementById("isbn").value,
-        publisher: document.getElementById("publisher").value
     };
 
-    fetch(`/api/books/${formData.isbn}`, {
+    fetch(`http://127.0.0.1:8081/api/v1/library/book/update`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -95,20 +117,32 @@ function handleSubmit(event) {
 
 // ✅ Validate form inputs
 function validateForm() {
+    let bookId = document.getElementById("id").value.trim();
     let title = document.getElementById("title").value.trim();
-    let author = document.getElementById("author").value.trim();
+    let authors = document.getElementById("authors").value.trim();
+    let description = document.getElementById("description").value.trim();
+    let genres = document.getElementById("genre").value.trim();
+    let publishedDate = document.getElementById("publishedDate").value.trim();
     let isbn = document.getElementById("isbn").value.trim();
     let publisher = document.getElementById("publisher").value.trim();
 
     let errors = {};
 
+    if (!bookId) errors.bookId = "Book ID is required";
     if (!title) errors.title = "Title is required.";
-    if (!author) errors.author = "Author is required.";
+    if (!authors) errors.author = "Author is required.";
+    if (!description) errors.description = "Description is required.";
+    if (!genres) errors.genres = "Genre is required.";
+    if (!publishedDate) errors.publishedDate = "PublishedDate is required.";
     if (!isbn.match(/^\d{10}(\d{3})?$/)) errors.isbn = "Invalid ISBN (must be 10 or 13 digits).";
     if (!publisher) errors.publisher = "Publisher is required.";
 
+    document.getElementById("idError").innerText = errors.title || "";
     document.getElementById("titleError").innerText = errors.title || "";
     document.getElementById("authorError").innerText = errors.author || "";
+    document.getElementById("descriptionError").innerText = errors.isbn || "";
+    document.getElementById("genresError").innerText = errors.publisher || "";
+    document.getElementById("publishedDateError").innerText = errors.author || "";
     document.getElementById("isbnError").innerText = errors.isbn || "";
     document.getElementById("publisherError").innerText = errors.publisher || "";
 

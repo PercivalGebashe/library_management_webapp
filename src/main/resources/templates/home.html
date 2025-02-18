@@ -37,21 +37,37 @@
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Edit Book</h2>
         <form id="editForm">
+            <label>ID:</label>
+            <input type="text" id="id" name="id" readonly>
+            <span class="error" id="idError"></span>
+
             <label>Title:</label>
             <input type="text" id="title" name="title">
             <span class="error" id="titleError"></span>
 
-            <label>Author:</label>
-            <input type="text" id="author" name="author">
+            <label>Description:</label>
+            <input type="text" id="description" name="description">
+            <span class="error" id="descriptionError"></span>
+
+            <label>Author(s):</label>
+            <input type="text" id="authors" name="authors">
             <span class="error" id="authorError"></span>
 
             <label>ISBN:</label>
             <input type="text" id="isbn" name="isbn" readonly>
             <span class="error" id="isbnError"></span>
 
-            <label>Publisher:</label>
-            <input type="text" id="publisher" name="publisher">
+            <label>Publish Date:</label>
+            <input type="date" id="publishedDate" name="publishedDate" readonly>
+            <span class="error" id="publishedDateError"></span>
+
+            <label>Publisher(s):</label>
+            <input type="text" id="publishers" name="publishers">
             <span class="error" id="publisherError"></span>
+
+            <label>Genre(s):</label>
+            <input type="text" id="genres" name="genres">
+            <span class="error" id="genreError"></span>
 
             <button type="submit">Save</button>
         </form>
