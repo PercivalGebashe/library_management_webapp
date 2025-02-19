@@ -20,18 +20,20 @@ h1 {
     color: #fff;
     margin-bottom: 1.5rem;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 /* Table Styling */
 table {
-    width: 80%;
-    max-width: 800px;
+    width: 90%;
+    max-width: 1200px;
     border-collapse: collapse;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    margin-top: 20px;
 }
 
 th, td {
@@ -43,8 +45,11 @@ th, td {
 
 th {
     background: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
+/* Buttons inside table */
 td button {
     padding: 8px 12px;
     border: none;
@@ -60,6 +65,26 @@ td button:hover {
     background: #e67e22;
 }
 
+/* Pagination Styles */
+#pagination {
+    margin-top: 15px;
+}
+
+#pagination button {
+    background: #4ca1af;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#pagination button:hover {
+    background: #2c3e50;
+}
+
 /* Modal Styling */
 .modal {
     display: none;
@@ -68,19 +93,20 @@ td button:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
 }
 
 .modal-content {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 350px;
+    width: 400px;
+    position: relative;
 }
 
 .modal h2 {
@@ -103,6 +129,13 @@ td button:hover {
     border: none;
     border-radius: 5px;
     font-size: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.modal input:read-only {
+    background: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
 }
 
 .modal button {

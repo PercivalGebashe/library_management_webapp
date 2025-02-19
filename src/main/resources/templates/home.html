@@ -9,6 +9,47 @@
 
 <h1>Library Management</h1>
 
+<!-- Search Bar -->
+<div class="search-container">
+    <select id="searchType">
+        <option value="title">Book Name</option>
+        <option value="id">Book ID</option>
+        <option value="author">Author Name</option>
+        <option value="authorId">Author ID</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button onclick="searchBooks()">Search</button>
+</div>
+
+<!-- Sidebar for Filters -->
+<aside class="sidebar">
+    <h3>Filter Books</h3>
+
+    <label>Title:</label>
+    <input type="text" id="filterTitle">
+
+    <label>Author:</label>
+    <select id="filterAuthor">
+        <option value="">Select an Author</option>
+        <!-- Authors will be populated dynamically -->
+    </select>
+
+    <label>Genre:</label>
+    <input type="text" id="filterGenre">
+
+    <label>Publication Date:</label>
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+
+    <button onclick="applyFilters()">Apply Filters</button>
+
+    <h3>Author Details</h3>
+    <div id="authorDetails">
+        <!-- Detailed author info will be shown here -->
+    </div>
+</aside>
+
+<!-- Book Table -->
 <table>
     <thead>
     <tr>
@@ -20,7 +61,7 @@
         <th>Publish Date</th>
         <th>Publisher</th>
         <th>ISBN</th>
-        <th>Action</th>
+        <th th:if="${role == 'ADMIN'}">Action</th> <!-- Only visible to ADMIN -->
     </tr>
     </thead>
     <tbody>
@@ -33,51 +74,41 @@
     <!-- JavaScript will insert buttons dynamically -->
 </div>
 
-<script type="text/javascript" th:src="@{/js/script.js}" th:defer></script>
-
-<!-- Edit Modal -->
-<div id="editModal" class="modal">
+<!-- Edit Modal (Only for Admins) -->
+<div id="editModal" class="modal" th:if="${role == 'ADMIN'}">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Edit Book</h2>
         <form id="editForm">
             <label>ID:</label>
             <input type="text" id="id" name="id" readonly>
-            <span class="error" id="idError"></span>
 
             <label>Title:</label>
             <input type="text" id="title" name="title">
-            <span class="error" id="titleError"></span>
 
             <label>Author(s):</label>
             <input type="text" id="authors" name="authors">
-            <span class="error" id="authorError"></span>
 
             <label>Description:</label>
             <input type="text" id="description" name="description">
-            <span class="error" id="descriptionError"></span>
 
             <label>Genre(s):</label>
             <input type="text" id="genres" name="genres">
-            <span class="error" id="genreError"></span>
 
             <label>Publish Date:</label>
             <input type="date" id="publishedDate" name="publishedDate" readonly>
-            <span class="error" id="publishedDateError"></span>
 
             <label>Publisher(s):</label>
             <input type="text" id="publishers" name="publishers">
-            <span class="error" id="publisherError"></span>
 
             <label>ISBN:</label>
             <input type="text" id="isbn" name="isbn" readonly>
-            <span class="error" id="isbnError"></span>
 
             <button type="submit">Save</button>
         </form>
     </div>
 </div>
 
-<script type="text/javascript" th:src="@{/js/script.js}" th:defer></script>
+<script type="text/javascript" th:src="@{/js/main.js}" th:defer></script>
 </body>
 </html>

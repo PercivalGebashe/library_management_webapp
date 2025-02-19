@@ -1,60 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-    loadBooks(); // Fetch and populate books when the page loads
-    document.getElementById("editForm").addEventListener("submit", handleSubmit);
-});
-
-const apiUrl = "http://127.0.0.1:8081/api/v1/library";
-let currentPage = 0;
-const pageSize = 10;
-
-function loadBooks(page = 0) {
-    fetch(`${apiUrl}?page=${page}&size=${pageSize}`)
-        .then(response => response.json())
-        .then(data => {
-            if (!data.content) {
-                console.error("Unexpected API response:", data);
-                return;
-            }
-
-            const tableBody = document.querySelector("tbody");
-            tableBody.innerHTML = "";
-
-            data.content.forEach(book => {
-                const row = document.createElement("tr");
-                row.dataset.id = book.isbn;
-                row.innerHTML = `
-                    <td>${book.bookId}</td>
-                    <td>${book.title}</td>
-                    <td>${book.authors}</td>
-                    <td>${book.description}</td>
-                    <td>${book.genres}</td>
-                    <td>${book.publishedDate}</td>
-                    <td>${book.publishers}</td>
-                    <td>${book.isbn}</td>
-                    <td><button class="edit-btn">Edit</button></td>
-                </tr>`;
-                tableBody.appendChild(row);
-            });
-
-            document.querySelectorAll(".edit-btn").forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.stopPropagation();
-                    openEditModal(this.closest("tr"));
-                });
-            });
-            updatePaginationControls(data);
-        })
-        .catch(error => console.error("Error loading books:", error));
-}
-
-function updatePaginationControls(data) {
-    document.getElementById("pagination").innerHTML = `
-        <button ${data.number === 0 ? "disabled" : ""} onclick="loadBooks(${data.number - 1})">Previous</button>
-        <span>Page ${data.number + 1} of ${data.totalPages}</span>
-        <button ${data.number + 1 >= data.totalPages ? "disabled" : ""} onclick="loadBooks(${data.number + 1})">Next</button>
-    `;
-}
-
 function openEditModal(row) {
     let modal = document.getElementById("editModal");
     let cells = row.getElementsByTagName("td");
@@ -82,11 +25,11 @@ function handleSubmit(event) {
     if (!isValid) return;
 
     let formData = {
-        bookId: document.getElementById("id").value,
+        id: document.getElementById("id").value,
         title: document.getElementById("title").value,
         author: document.getElementById("authors").value,
         description: document.getElementById("description").value,
-        genres: document.getElementById("genre").value,
+        genres: document.getElementById("genres").value,
         publishedDate: document.getElementById("publishedDate").value,
         publishers: document.getElementById("publishers").value,
         isbn: document.getElementById("isbn").value,
@@ -109,18 +52,18 @@ function handleSubmit(event) {
 }
 
 function validateForm() {
-    let bookId = document.getElementById("id").value.trim();
+    let id = document.getElementById("id").value.trim();
     let title = document.getElementById("title").value.trim();
     let authors = document.getElementById("authors").value.trim();
     let description = document.getElementById("description").value.trim();
-    let genres = document.getElementById("genre").value.trim();
+    let genres = document.getElementById("genres").value.trim();
     let publishedDate = document.getElementById("publishedDate").value.trim();
     let publishers = document.getElementById("publishers").value.trim();
     let isbn = document.getElementById("isbn").value.trim();
 
     let errors = {};
 
-    if (!bookId) errors.bookId = "Book ID is required";
+    if (!id) errors.id = "Book ID is required";
     if (!title) errors.title = "Title is required.";
     if (!authors) errors.author = "Author is required.";
     if (!description) errors.description = "Description is required.";
