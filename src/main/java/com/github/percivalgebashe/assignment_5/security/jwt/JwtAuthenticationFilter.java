@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public void addJwtToCookie(HttpServletResponse response, String jwt) {
         Cookie cookie = new Cookie("JWT", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+//        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(3600);
         response.addCookie(cookie);

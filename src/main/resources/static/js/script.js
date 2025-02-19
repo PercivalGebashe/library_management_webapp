@@ -5,9 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const apiUrl = "http://127.0.0.1:8081/api/v1/library";
 let currentPage = 0;
-const pageSize = 10; // Adjust if needed
+const pageSize = 10;
 
-// ✅ Fetch books from API and populate table
 function loadBooks(page = 0) {
     fetch(`${apiUrl}?page=${page}&size=${pageSize}`)
         .then(response => response.json())
@@ -18,12 +17,11 @@ function loadBooks(page = 0) {
             }
 
             const tableBody = document.querySelector("tbody");
-            tableBody.innerHTML = ""; // Clear existing rows
+            tableBody.innerHTML = "";
 
             data.content.forEach(book => {
                 const row = document.createElement("tr");
-                row.dataset.id = book.isbn; // Store ISBN for reference
-                // const row = `<!--<tr data-id="${book.isbn}" onclick="openEditModal(this)">-->
+                row.dataset.id = book.isbn;
                 row.innerHTML = `
                     <td>${book.bookId}</td>
                     <td>${book.title}</td>
@@ -38,11 +36,10 @@ function loadBooks(page = 0) {
                 tableBody.appendChild(row);
             });
 
-            // ✅ Add event listener to all buttons AFTER they are added to the DOM
             document.querySelectorAll(".edit-btn").forEach(button => {
                 button.addEventListener("click", function (event) {
-                    event.stopPropagation(); // Prevents the row click event from firing
-                    openEditModal(this.closest("tr")); // Pass the parent row
+                    event.stopPropagation();
+                    openEditModal(this.closest("tr"));
                 });
             });
             updatePaginationControls(data);
@@ -50,7 +47,6 @@ function loadBooks(page = 0) {
         .catch(error => console.error("Error loading books:", error));
 }
 
-// ✅ Update pagination controls
 function updatePaginationControls(data) {
     document.getElementById("pagination").innerHTML = `
         <button ${data.number === 0 ? "disabled" : ""} onclick="loadBooks(${data.number - 1})">Previous</button>
@@ -59,7 +55,6 @@ function updatePaginationControls(data) {
     `;
 }
 
-// ✅ Open the edit modal and populate fields
 function openEditModal(row) {
     let modal = document.getElementById("editModal");
     let cells = row.getElementsByTagName("td");
@@ -76,12 +71,10 @@ function openEditModal(row) {
     modal.style.display = "block";
 }
 
-// ✅ Close the modal
 function closeModal() {
     document.getElementById("editModal").style.display = "none";
 }
 
-// ✅ Handle form submission for book updates
 function handleSubmit(event) {
     event.preventDefault();
 
@@ -99,7 +92,7 @@ function handleSubmit(event) {
         isbn: document.getElementById("isbn").value,
     };
 
-    fetch(`http://127.0.0.1:8081/api/v1/library/book/update`, {
+    fetch(`${apiUrl}/book/update`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -115,7 +108,6 @@ function handleSubmit(event) {
         .catch(error => console.error("Error:", error));
 }
 
-// ✅ Validate form inputs
 function validateForm() {
     let bookId = document.getElementById("id").value.trim();
     let title = document.getElementById("title").value.trim();
@@ -149,7 +141,6 @@ function validateForm() {
     return Object.keys(errors).length === 0;
 }
 
-// ✅ Close modal when clicking outside of it
 window.onclick = function(event) {
     let modal = document.getElementById("editModal");
     if (event.target == modal) {

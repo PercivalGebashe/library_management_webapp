@@ -1,5 +1,6 @@
 package com.github.percivalgebashe.assignment_5.dto;
 
+import com.github.percivalgebashe.assignment_5.util.IdGenerator;
 import lombok.Builder;
 import lombok.Data;
 
@@ -20,11 +21,8 @@ public class BookDTO {
     private String publishers;
     public void generateBookId() {
         if (authors != null && !authors.isEmpty()) {
-            String authorNames = authors.stream()
-                    .map(AuthorDTO::getName)
-                    .collect(Collectors.joining("_"));
 
-             id = authorNames.replaceAll("\\s+", "") + "_" + title.replaceAll("\\s+", "");
+             id = IdGenerator.generateBookId(authors.stream().map(AuthorDTO::getName).toList(),title,publishedDate);
         }
     }
 }
