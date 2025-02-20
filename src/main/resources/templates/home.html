@@ -11,14 +11,16 @@
 
 <!-- Search Bar -->
 <div class="search-container">
-    <select id="searchType">
-        <option value="title">Book Name</option>
-        <option value="id">Book ID</option>
-        <option value="author">Author Name</option>
-        <option value="authorId">Author ID</option>
-    </select>
-    <input type="text" id="searchInput" placeholder="Search...">
-    <button onclick="searchBooks()">Search</button>
+    <form id="searchForm" onsubmit="searchBooks(); return false;">
+        <select id="searchType">
+            <option value="title">Book Name</option>
+            <option value="id">Book ID</option>
+            <option value="author">Author Name</option>
+            <option value="authorId">Author ID</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
 </div>
 
 <!-- Sidebar for Filters -->

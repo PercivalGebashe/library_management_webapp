@@ -6,7 +6,8 @@ export class BookManager {
 
         document.addEventListener("DOMContentLoaded", () => {
             this.loadBooks();
-            document.getElementById("editForm").addEventListener("submit", (event) => this.handleSubmit(event));
+            document.getElementById("editForm").addEventListener(
+                "submit", (event) => this.handleSubmit(event));
         });
     }
 
@@ -47,8 +48,6 @@ export class BookManager {
                     });
                 });
 
-                // const pagination = new Pagination(apiUrl, pageSize);
-                // pagination.updatePaginationControls(data);
             })
             .catch(error => console.error("Error loading books:", error));
     }
@@ -286,11 +285,11 @@ class Main{
     run() {
         const apiUrl = "http://127.0.0.1:8081/api/v1/library";
         const bookManager = new BookManager(apiUrl);
-        // // const pagination = new Pagination("paginationControls", (page) => bookManager.loadBooks(page));
-        // const bookSearch = new BookSearch("searchForm", (books) => this.updateTable(books));
-        // const filter = new Filter();
-        // const editModal = new EditModal(apiUrl, () => bookManager.loadBooks());
-        // const authors = new Authors();
+        const pagination = new Pagination("paginationControls", (page) => bookManager.loadBooks(page));
+        const bookSearch = new BookSearch("searchForm", (books) => this.updateTable(books));
+        const filter = new Filter();
+        const editModal = new EditModal(apiUrl, () => bookManager.loadBooks());
+        const authors = new Authors();
 
         bookManager.loadBooks();
     }
