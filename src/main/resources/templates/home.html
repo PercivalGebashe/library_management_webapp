@@ -11,12 +11,12 @@
 
 <!-- Search Bar -->
 <div class="search-container">
-    <form id="searchForm" onsubmit="searchBooks(); return false;">
+    <form id="searchForm">
         <select id="searchType">
             <option value="title">Book Name</option>
             <option value="id">Book ID</option>
-            <option value="author">Author Name</option>
-            <option value="authorId">Author ID</option>
+            <option value="isbn">ISBN</option>
+            <option value="genre">Genre</option>
         </select>
         <input type="text" id="searchInput" placeholder="Search...">
         <button type="submit">Search</button>
@@ -27,28 +27,25 @@
 <aside class="sidebar">
     <h3>Filter Books</h3>
 
-    <label>Title:</label>
+    <label for="filterTitle">Title:</label>
     <input type="text" id="filterTitle">
 
-    <label>Author:</label>
+    <label for="filterAuthor">Author:</label>
     <select id="filterAuthor">
         <option value="">Select an Author</option>
-        <!-- Authors will be populated dynamically -->
     </select>
 
-    <label>Genre:</label>
+    <label for="filterGenre">Genre:</label>
     <input type="text" id="filterGenre">
 
     <label>Publication Date:</label>
     <input type="date" id="startDate">
     <input type="date" id="endDate">
 
-    <button onclick="applyFilters()">Apply Filters</button>
+    <button id="applyFiltersBtn">Apply Filters</button>
 
     <h3>Author Details</h3>
-    <div id="authorDetails">
-        <!-- Detailed author info will be shown here -->
-    </div>
+    <div id="authorDetails"></div>
 </aside>
 
 <!-- Book Table -->
@@ -63,18 +60,15 @@
         <th>Publish Date</th>
         <th>Publisher</th>
         <th>ISBN</th>
-        <th th:if="${role == 'ADMIN'}">Action</th> <!-- Only visible to ADMIN -->
+        <th th:if="${role == 'ADMIN'}">Action</th>
     </tr>
     </thead>
     <tbody>
-    <!-- Rows will be inserted dynamically by JavaScript -->
     </tbody>
 </table>
 
 <!-- Pagination Controls -->
-<div id="pagination" style="text-align: center; margin-top: 10px;">
-    <!-- JavaScript will insert buttons dynamically -->
-</div>
+<div id="pagination"></div>
 
 <!-- Edit Modal (Only for Admins) -->
 <div id="editModal" class="modal" th:if="${role == 'ADMIN'}">

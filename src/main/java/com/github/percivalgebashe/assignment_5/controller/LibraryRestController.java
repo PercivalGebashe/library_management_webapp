@@ -121,4 +121,27 @@ public class LibraryRestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+    @GetMapping("book/{searchType}")
+    public ResponseEntity<BookDTO> getBookById(@PathVariable String searchType) {
+        try {
+            WebClient client = WebClient.builder().build();
+
+            BookDTO bookDTO = Objects.requireNonNull(client.post()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/books")
+                            .queryParam("searchType", searchType)
+                            .build())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .toEntity(BookDTO.class)
+                    .block()).getBody();
+            return ResponseEntity.ok(bookDTO);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
