@@ -9,10 +9,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.OAuth2ResourceServerDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,9 +47,9 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/login",
                                 "/home",
+                                "/api/v1/auth/**",
                                 "/css/**",
-                                "/js/**",
-                                "/api/v1/auth/**").permitAll()
+                                "/js/**").permitAll()
                         .requestMatchers("/api/v1/library/**").hasRole(Roles.ADMIN.name())
                         .requestMatchers("/api/v1/library/user/**").hasRole(Roles.USER.name())
                         .anyRequest().authenticated()

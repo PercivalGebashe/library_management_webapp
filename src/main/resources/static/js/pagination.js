@@ -1,4 +1,4 @@
-export default class Pagination {
+export class Pagination {
     constructor(containerId, loadBooksCallback) {
         this.container = document.getElementById(containerId);
         this.loadBooks = loadBooksCallback; // Function to load books

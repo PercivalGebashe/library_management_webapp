@@ -1,4 +1,4 @@
-export default class LoginHandler {
+export class LoginHandler {
     constructor() {
         this.loginForm = document.getElementById("loginForm");
 
@@ -15,16 +15,17 @@ export default class LoginHandler {
             password: document.getElementById("password").value
         };
 
-        fetch("/api/v1/auth/authenticate", {
+        fetch(`/api/v1/auth/authenticate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
         })
             .then(response => {
+                console.log(response);
                 if (!response.ok) {
                     throw new Error("Login failed");
                 }
-                return response.json(); // Parse JSON if needed
+                fetch("home") // Parse JSON if needed
             })
             .then(data => {
                 console.log("Login successful", data);
@@ -36,3 +37,6 @@ export default class LoginHandler {
             });
     }
 }
+
+new LoginHandler();
+

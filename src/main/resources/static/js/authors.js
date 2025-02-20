@@ -1,4 +1,4 @@
-export default class Authors {
+export class Authors {
     constructor() {
         document.addEventListener("DOMContentLoaded", () => {
             this.fetchAuthors(); // Fetch authors dynamically

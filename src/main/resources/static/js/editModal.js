@@ -1,4 +1,4 @@
-export default class EditModal {
+export class EditModal {
     constructor(apiUrl, loadBooks) {
         this.apiUrl = apiUrl;
         this.loadBooks = loadBooks;

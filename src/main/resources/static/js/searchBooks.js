@@ -1,4 +1,4 @@
-export default class BookSearch {
+export class BookSearch {
     constructor(searchFormId, updateTableCallback) {
         this.form = document.getElementById(searchFormId);
         this.updateTable = updateTableCallback;

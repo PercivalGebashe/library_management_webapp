@@ -1,4 +1,4 @@
-export default class BookManager {
+export class BookManager {
     constructor(apiUrl, pageSize = 10) {
         this.apiUrl = apiUrl;
         this.pageSize = pageSize;

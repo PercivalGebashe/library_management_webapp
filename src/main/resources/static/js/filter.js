@@ -1,4 +1,4 @@
-export default class Filter {
+export class Filter {
     constructor() {
         const filterBtn = document.getElementById("applyFiltersBtn");
         if (filterBtn) {
