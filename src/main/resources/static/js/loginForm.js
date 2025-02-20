@@ -38,5 +38,5 @@ export class LoginHandler {
     }
 }
 
-new LoginHandler();
+// new LoginHandler();
 

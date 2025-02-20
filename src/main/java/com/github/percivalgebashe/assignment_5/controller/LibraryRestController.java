@@ -6,11 +6,8 @@ import com.github.percivalgebashe.assignment_5.dto.PaginatedResponse;
 import com.github.percivalgebashe.assignment_5.exception.NoContentException;
 import com.github.percivalgebashe.assignment_5.security.jwt.JwtUtil;
 import com.github.percivalgebashe.assignment_5.service.UserService;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
 import java.util.Objects;
 
-@CrossOrigin(origins = "http://127.0.0.1:8081")
 @EnableMethodSecurity
 @RestController
 @RequestMapping("/api/v1/library")
