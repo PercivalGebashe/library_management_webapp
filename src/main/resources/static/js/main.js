@@ -45,7 +45,7 @@ class BookManager {
                     <div>${book.publishedDate}</div>
                     <div>${book.publishers}</div>
                     <div>${book.isbn}</div>
-                    <div><button class="edit-btn">Edit</button></div>
+                    <div><button id="editButton" class="edit-btn">Edit</button></div>
                 `;
 
                     // Row click handler for book details
@@ -56,7 +56,7 @@ class BookManager {
                     });
 
                     // Edit button click handler
-                    const editBtn = row.querySelector(".edit-btn");
+                    const editBtn = row.querySelector("button");
                     editBtn.addEventListener("click", (event) => {
                         event.stopPropagation();  // Stop event from bubbling up to row
                         this.openEditModal(book);
