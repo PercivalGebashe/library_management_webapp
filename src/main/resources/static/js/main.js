@@ -5,10 +5,19 @@ class BookManager {
 
         document.addEventListener("DOMContentLoaded", () => {
             this.loadBooks();
-            document.getElementById("editForm").addEventListener(
-                "submit", (event) => this.handleSubmit(event)
-            );
         });
+
+        // Close modals when clicking outside
+        window.onclick = (event) => {
+            let editModal = document.getElementById("editModal");
+            let bookDetailsModal = document.getElementById("bookDetailsModal");
+            if (event.target === editModal) {
+                this.closeModal(editModal);
+            }
+            if (event.target === bookDetailsModal) {
+                this.closeModal(bookDetailsModal);
+            }
+        };
     }
 
     loadBooks(page = 0) {
@@ -19,77 +28,95 @@ class BookManager {
                     console.error("Unexpected API response:", data);
                     return;
                 }
-
-                const tableBody = document.querySelector("tbody");
-                tableBody.innerHTML = "";
+                const booksContainer = document.getElementById("booksContainer");
+                booksContainer.innerHTML = "";
 
                 data.content.forEach(book => {
-                    const row = document.createElement("tr");
+                    const row = document.createElement("div");
+                    row.className = "grid-row";
                     row.dataset.id = book.isbn;
+
                     row.innerHTML = `
-                        <td>${book.id}</td>
-                        <td>${book.title}</td>
-                        <td>${book.authors}</td>
-                        <td>${book.description}</td>
-                        <td>${book.genres}</td>
-                        <td>${book.publishedDate}</td>
-                        <td>${book.publishers}</td>
-                        <td>${book.isbn}</td>
-                        <td><button class="edit-btn admin-only">Edit</button></td>
-                    </tr>`;
-                    tableBody.appendChild(row);
-                });
+                    <div>${book.id}</div>
+                    <div>${book.title}</div>
+                    <div>${book.authors}</div>
+                    <div>${book.description}</div>
+                    <div>${book.genres}</div>
+                    <div>${book.publishedDate}</div>
+                    <div>${book.publishers}</div>
+                    <div>${book.isbn}</div>
+                    <div><button class="edit-btn">Edit</button></div>
+                `;
 
-                document.querySelectorAll(".edit-btn").forEach(button => {
-                    button.addEventListener("click", (event) => {
-                        event.stopPropagation();
-                        this.openEditModal(event.target.closest("tr"));
+                    // Row click handler for book details
+                    row.addEventListener("click", (event) => {
+                        if (!event.target.closest('.edit-btn')) {
+                            this.openBookDetailsModal(book);
+                        }
                     });
+
+                    // Edit button click handler
+                    const editBtn = row.querySelector(".edit-btn");
+                    editBtn.addEventListener("click", (event) => {
+                        event.stopPropagation();  // Stop event from bubbling up to row
+                        this.openEditModal(book);
+                    });
+
+                    // Row click handler for book details
+                    const cells = row.querySelectorAll("div:not(:last-child)");  // Select all cells except the last one (actions column)
+                    cells.forEach(cell => {
+                        cell.addEventListener("click", () => {
+                            this.openBookDetailsModal(book);
+                        });
+                    });
+
+                    booksContainer.appendChild(row);
                 });
 
-                pagination.updateControls(data);
+                this.updateControls(data);
             })
             .catch(error => console.error("Error loading books:", error));
     }
 
-    handleSubmit(event) {
-        event.preventDefault();
-        console.log("Form submitted");
+    openBookDetailsModal(book) {
+        document.getElementById("bDModalTitle").textContent = book.title;
+        document.getElementById("bDModalAuthors").textContent = book.authors;
+        document.getElementById("bDModalDescription").textContent = book.description;
+        document.getElementById("bDModalGenres").textContent = book.genres;
+        document.getElementById("bDModalPublishedDate").textContent = book.publishedDate;
+        document.getElementById("bDModalPublishers").textContent = book.publishers;
+        document.getElementById("bDModalIsbn").textContent = book.isbn;
+        document.getElementById("bDModalImage").src = "https://picsum.photos/200/300/?blur"
+
+        document.getElementById("bookDetailsModal").style.display = "block";
     }
 
-    openEditModal(row) {
-        console.log("Opening modal for:", row.dataset.id);
+    openEditModal(book) {
+        document.getElementById("editModalId").value = book.id;
+        document.getElementById("editModalTitle").value = book.title;
+        document.getElementById("editModalAuthors").value = book.authors;
+        document.getElementById("editModalDescription").value = book.description;
+        document.getElementById("editModalGenres").value = book.genres;
+        document.getElementById("editModalPublishedDate").value = book.publishedDate;
+        document.getElementById("editModalPublishers").value = book.publishers;
+        document.getElementById("editModalIsbn").value = book.isbn;
+
+        document.getElementById("editModal").style.display = "block";
     }
 
-    updateTable(books) {
-        const tableBody = document.querySelector("tbody");
-        tableBody.innerHTML = "";
-
-        books.forEach(book => {
-            const row = document.createElement("tr");
-            row.dataset.id = book.isbn;
-            row.innerHTML = `
-                <td>${book.id}</td>
-                <td>${book.title}</td>
-                <td>${book.authors}</td>
-                <td>${book.description}</td>
-                <td>${book.genres}</td>
-                <td>${book.publishedDate}</td>
-                <td>${book.publishers}</td>
-                <td>${book.isbn}</td>
-                <td><button class="edit-btn admin-only">Edit</button></td>
-            `;
-            tableBody.appendChild(row);
-        });
+    closeModal(modal) {
+        modal.style.display = "none";
     }
-}
 
-class BookSearch {
-    constructor(searchFormId, updateTableCallback) {
-        this.form = document.getElementById(searchFormId);
-        this.updateTable = updateTableCallback;
+    updateControls(data) {
+        document.getElementById("pagination").innerHTML = `
+            <button id="prevPage" ${data.number === 0 ? "disabled" : ""}>Previous</button>
+            <span>Page ${data.number + 1} of ${data.totalPages}</span>
+            <button id="nextPage" ${data.number + 1 >= data.totalPages ? "disabled" : ""}>Next</button>
+        `;
 
-        this.form.addEventListener("submit", (event) => this.handleSearch(event));
+        document.getElementById("prevPage").addEventListener("click", () => this.loadBooks(data.number - 1));
+        document.getElementById("nextPage").addEventListener("click", () => this.loadBooks(data.number + 1));
     }
 
     handleSearch(event) {
@@ -102,30 +129,6 @@ class BookSearch {
             .then(response => response.json())
             .then(books => this.updateTable(books))
             .catch(error => console.error("Error searching books:", error));
-    }
-}
-
-class Pagination {
-    constructor(containerId, loadBooksCallback) {
-        this.container = document.getElementById(containerId);
-        this.loadBooks = loadBooksCallback;
-    }
-
-    updateControls(data) {
-        this.container.innerHTML = `
-            <button id="prevPage" ${data.number === 0 ? "disabled" : ""}>Previous</button>
-            <span>Page ${data.number + 1} of ${data.totalPages}</span>
-            <button id="nextPage" ${data.number + 1 >= data.totalPages ? "disabled" : ""}>Next</button>
-        `;
-
-        document.getElementById("prevPage").addEventListener("click", () => this.loadBooks(data.number - 1));
-        document.getElementById("nextPage").addEventListener("click", () => this.loadBooks(data.number + 1));
-    }
-}
-
-class Filter {
-    constructor() {
-        document.getElementById("applyFiltersBtn").addEventListener("click", () => this.applyFilters());
     }
 
     applyFilters() {
@@ -146,48 +149,6 @@ class Filter {
             .then(response => response.json())
             .then(books => bookManager.updateTable(books))
             .catch(error => console.error("Error applying filters:", error));
-    }
-}
-
-class EditModal {
-    constructor(apiUrl, loadBooks) {
-        this.apiUrl = apiUrl;
-        this.loadBooks = loadBooks;
-
-        window.onclick = (event) => {
-            let modal = document.getElementById("editModal");
-            if (event.target === modal) {
-                this.closeModal();
-            }
-        };
-    }
-
-    openEditModal(row) {
-        let modal = document.getElementById("editModal");
-        let cells = row.getElementsByTagName("td");
-
-        document.getElementById("id").value = cells[0].innerText;
-        document.getElementById("title").value = cells[1].innerText;
-        document.getElementById("authors").value = cells[2].innerText;
-        document.getElementById("description").value = cells[3].innerText;
-        document.getElementById("genres").value = cells[4].innerText;
-        document.getElementById("publishedDate").value = cells[5].innerText;
-        document.getElementById("publishers").value = cells[6].innerText;
-        document.getElementById("isbn").value = cells[7].innerText;
-
-        modal.style.display = "block";
-    }
-
-    closeModal() {
-        document.getElementById("editModal").style.display = "none";
-    }
-}
-
-class Authors {
-    constructor() {
-        document.addEventListener("DOMContentLoaded", () => {
-            this.fetchAuthors();
-        });
     }
 
     fetchAuthors() {
@@ -216,6 +177,7 @@ class Authors {
     }
 }
 
+// Initialize the app
 class Main {
     constructor() {
         document.addEventListener("DOMContentLoaded", () => {
@@ -226,15 +188,8 @@ class Main {
     run() {
         const apiUrl = "http://127.0.0.1:8081/api/v1/library";
         window.bookManager = new BookManager(apiUrl);
-        window.pagination = new Pagination("pagination", (page) => bookManager.loadBooks(page));
-        window.bookSearch = new BookSearch("searchForm", (books) => bookManager.updateTable(books));
-        window.filter = new Filter();
-        window.editModal = new EditModal(apiUrl, () => bookManager.loadBooks());
-        window.authors = new Authors();
-
         bookManager.loadBooks();
     }
 }
 
-// Initialize the app
 new Main();

@@ -71,7 +71,7 @@ public class LibraryRestController {
     }
 
     @PutMapping("/book/update")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO bookDTO) {
         try {
             System.out.println("bookDTO: " + bookDTO);

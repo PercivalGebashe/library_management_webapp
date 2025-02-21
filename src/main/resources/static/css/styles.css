@@ -6,9 +6,10 @@
     font-family: 'Poppins', sans-serif;
 }
 
-body {
+.container {
+    position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, #2c3e50, #4ca1af);
@@ -23,34 +24,43 @@ h1 {
     text-align: center;
 }
 
-/* Table Styling */
-table {
-    width: 90%;
-    max-width: 1200px;
-    border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    margin-top: 20px;
+/* Page Container */
+.page-container {
+    width: 100%;
+    display: flex;
+    position: relative;
 }
 
-th, td {
-    padding: 12px;
-    text-align: left;
-    color: #fff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+/* Main Content Section */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px; /* Match sidebar width */
 }
 
-th {
+/* Search Bar */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.2);
-    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.search-container select,
+.search-container input {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
     font-size: 14px;
 }
 
-/* Buttons inside table */
-td button {
+.search-container button {
     padding: 8px 12px;
     border: none;
     border-radius: 5px;
@@ -61,13 +71,176 @@ td button {
     transition: background 0.3s;
 }
 
-td button:hover {
+.search-container button:hover {
     background: #e67e22;
+}
+
+/* Sidebar Filter */
+.sidebar-section {
+    width: 250px;
+}
+
+.sidebar {
+    position: fixed;
+    left: 10px;
+    top: 29%;
+    width: 250px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar h3 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.sidebar label {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.sidebar input,
+.sidebar select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.sidebar button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #ff8c00;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.sidebar button:hover {
+    background: #e67e22;
+}
+
+/* Author Details */
+#authorDetails {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    color: #fff;
+}
+
+/* Table Container */
+.table-container {
+    width: 100%;
+}
+
+/* Table Styling */
+.grid-table {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.grid-header {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+}
+
+.grid-header > div {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+.grid-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.grid-row > div {
+    padding: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-row button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #ff8c00;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.grid-row button:hover {
+    background: #e67e22;
+}
+
+.grid-cell {
+    padding: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-cell.actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-row {
+    cursor: pointer;
+}
+
+.grid-row:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.edit-btn {
+    cursor: pointer;
+}
+
+/* Pagination Container */
+.pagination-container {
+    width: 100%;
 }
 
 /* Pagination Styles */
 #pagination {
     margin-top: 15px;
+    text-align: center;
 }
 
 #pagination button {
@@ -83,6 +256,35 @@ td button:hover {
 
 #pagination button:hover {
     background: #2c3e50;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 25px;
+    cursor: pointer;
 }
 
 /* Modal Styling */

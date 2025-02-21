@@ -7,102 +7,126 @@
 </head>
 <body>
 
-<h1>Library Management</h1>
+<div class="container">
+<!-- Sidebar Section -->
+    <aside class="sidebar">
+        <h3>Filter Books</h3>
+        <label for="filterTitle">Title:</label>
+        <input type="text" id="filterTitle">
 
-<!-- Search Bar -->
-<div class="search-container">
-    <form id="searchForm">
-        <select id="searchType">
-            <option value="title">Book Name</option>
-            <option value="id">Book ID</option>
-            <option value="isbn">ISBN</option>
-            <option value="genre">Genre</option>
+        <label for="filterAuthor">Author:</label>
+        <select id="filterAuthor">
+            <option value="">Select an Author</option>
         </select>
-        <input type="text" id="searchInput" placeholder="Search...">
-        <button type="submit">Search</button>
-    </form>
+
+        <label for="filterGenre">Genre:</label>
+        <input type="text" id="filterGenre">
+
+        <label>Publication Date:</label>
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+
+        <button id="applyFiltersBtn">Apply Filters</button>
+    </aside>
+
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+        <!--        -->
+        <h1>Library Management</h1>
+        <!-- Search Section -->
+        <div class="search-section">
+            <!-- Basic Search -->
+            <div class="search-container">
+                <form id="searchForm">
+                    <select id="searchType">
+                        <option value="searchTitle">Book Name</option>
+                        <option value="searchId">Book ID</option>
+                        <option value="searchIsbn">ISBN</option>
+                        <option value="searchGenre">Genre</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Search...">
+                    <button id="searchSubmitBtn" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <div class="grid-table">
+                <div class="grid-header">
+                    <div>ID</div>
+                    <div>Title</div>
+                    <div>Author</div>
+                    <div>Description</div>
+                    <div>Genres</div>
+                    <div>Publish Date</div>
+                    <div>Publisher</div>
+                    <div>ISBN</div>
+                    <div th:if="${role == 'ADMIN'}">Actions</div>
+                </div>
+                <div id="booksContainer" class="grid-body">
+                    <!-- dynamically load book data -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="pagination-section">
+            <div id="pagination"></div>
+        </div>
+    </div>
 </div>
 
-<!-- Sidebar for Filters -->
-<aside class="sidebar">
-    <h3>Filter Books</h3>
-
-    <label for="filterTitle">Title:</label>
-    <input type="text" id="filterTitle">
-
-    <label for="filterAuthor">Author:</label>
-    <select id="filterAuthor">
-        <option value="">Select an Author</option>
-    </select>
-
-    <label for="filterGenre">Genre:</label>
-    <input type="text" id="filterGenre">
-
-    <label>Publication Date:</label>
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-
-    <button id="applyFiltersBtn">Apply Filters</button>
-
-    <h3>Author Details</h3>
-    <div id="authorDetails"></div>
-</aside>
-
-<!-- Book Table -->
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Description</th>
-        <th>Genres</th>
-        <th>Publish Date</th>
-        <th>Publisher</th>
-        <th>ISBN</th>
-        <th th:if="${role == 'ADMIN'}">Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-
-<!-- Pagination Controls -->
-<div id="pagination"></div>
-
 <!-- Edit Modal (Only for Admins) -->
-<div id="editModal" class="modal" th:if="${role == 'ADMIN'}">
+<div id="editModal" class="modal" > <!-- th:if="${role == 'ADMIN'}" -->
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Edit Book</h2>
         <form id="editForm">
             <label>ID:</label>
-            <input type="text" id="id" name="id" readonly>
+            <input type="text" id="editModalId" name="id" readonly>
 
             <label>Title:</label>
-            <input type="text" id="title" name="title">
+            <input type="text" id="editModalTitle" name="title">
 
             <label>Author(s):</label>
-            <input type="text" id="authors" name="authors">
+            <input type="text" id="editModalAuthors" name="authors">
 
             <label>Description:</label>
-            <input type="text" id="description" name="description">
+            <input type="text" id="editModalDescription" name="description">
 
             <label>Genre(s):</label>
-            <input type="text" id="genres" name="genres">
+            <input type="text" id="editModalGenres" name="genres">
 
             <label>Publish Date:</label>
-            <input type="date" id="publishedDate" name="publishedDate" readonly>
+            <input type="date" id="editModalPublishedDate" name="publishedDate" readonly>
 
             <label>Publisher(s):</label>
-            <input type="text" id="publishers" name="publishers">
+            <input type="text" id="editModalPublishers" name="publishers">
 
             <label>ISBN:</label>
-            <input type="text" id="isbn" name="isbn" readonly>
+            <input type="text" id="editModalIsbn" name="isbn" readonly>
 
-            <button type="submit">Save</button>
+            <button id="editModalSubmitBtn" type="submit">Save</button>
         </form>
     </div>
+
+    <!-- View Book Details Modal -->
+    <div id="bookDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookModal()">&times;</span>
+            <h2 id="bDModalTitle"></h2>
+            <img id="bDModalImage" src="" alt="Book Cover" style="max-width: 150px; height: auto; display: block; margin-bottom: 10px;">
+            <p id="bDModalAuthors"><strong>Author(s):</strong> <span ></span></p>
+            <p id="bDModalDescription"><strong>Description:</strong> <span ></span></p>
+            <p id="bDModalGenres"><strong>Genre(s):</strong> <span ></span></p>
+            <p id="bDModalPublishedDate"><strong>Publish Date:</strong> <span ></span></p>
+            <p id="bDModalPublishers"><strong>Publisher(s):</strong> <span ></span></p>
+            <p id="bDModalIsbn"><strong>ISBN:</strong> <span ></span></p>
+        </div>
+    </div>
+
 </div>
 
 <script th:type="module" th:src="@{/js/main.js?v=1.0}" th:defer></script>
