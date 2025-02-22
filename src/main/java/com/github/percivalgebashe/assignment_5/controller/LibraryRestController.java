@@ -89,7 +89,7 @@ public class LibraryRestController {
                     .bodyValue(bookDTO)
                     .retrieve()
                     .toEntity(BookDTO.class)
-                    .block()).getBody();
+                    .   block()).getBody();
 
             return ResponseEntity.ok(book);
         }catch (NoContentException e) {

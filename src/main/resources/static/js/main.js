@@ -50,24 +50,15 @@ class BookManager {
 
                     // Row click handler for book details
                     row.addEventListener("click", (event) => {
-                        if (!event.target.closest('.edit-btn')) {
-                            this.openBookDetailsModal(book);
-                        }
+                        event.stopPropagation();
+                        this.openBookDetailsModal(book);
                     });
 
                     // Edit button click handler
-                    const editBtn = row.querySelector("button");
+                    const editBtn = row.querySelector(".edit-btn");
                     editBtn.addEventListener("click", (event) => {
-                        event.stopPropagation();  // Stop event from bubbling up to row
+                        event.stopPropagation();
                         this.openEditModal(book);
-                    });
-
-                    // Row click handler for book details
-                    const cells = row.querySelectorAll("div:not(:last-child)");  // Select all cells except the last one (actions column)
-                    cells.forEach(cell => {
-                        cell.addEventListener("click", () => {
-                            this.openBookDetailsModal(book);
-                        });
                     });
 
                     booksContainer.appendChild(row);
@@ -92,6 +83,9 @@ class BookManager {
     }
 
     openEditModal(book) {
+        document.getElementById("editForm").addEventListener("submit",
+            (event) => {this.handleEditSubmit(event)})
+
         document.getElementById("editModalId").value = book.id;
         document.getElementById("editModalTitle").value = book.title;
         document.getElementById("editModalAuthors").value = book.authors;
@@ -102,6 +96,35 @@ class BookManager {
         document.getElementById("editModalIsbn").value = book.isbn;
 
         document.getElementById("editModal").style.display = "block";
+    }
+
+    handleEditSubmit(event) {
+        event.preventDefault();
+        let formData = {
+            id: document.getElementById("editModalId").value,
+            title: document.getElementById("editModalTitle").value,
+            authors: document.getElementById("editModalAuthors").values,
+            description: document.getElementById("editModalDescription").value,
+            genres: document.getElementById("editModalGenres").value,
+            publishedDate: document.getElementById("editModalPublishedDate").value,
+            publishers: document.getElementById("editModalPublishers").value,
+            isbn: document.getElementById("editModalIsbn").value,
+        };
+
+        fetch(`${this.apiUrl}/book/update`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(() => {
+                alert("Book updated successfully!");
+                document.getElementById("editModal").style.display = "none";
+                this.loadBooks();
+            })
+            .catch(error => console.error("Error updating book:", error));
     }
 
     closeModal(modal) {

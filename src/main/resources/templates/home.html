@@ -108,7 +108,9 @@
             <label>ISBN:</label>
             <input type="text" id="editModalIsbn" name="isbn" readonly>
 
-            <button id="editModalSubmitBtn" type="submit">Save</button>
+            <button type="submit" class="editModalSubmitBtn" id="editModalSubmitBtn" name="editModalSubmitBtn">
+                Save
+            </button>
         </form>
     </div>
 
@@ -117,13 +119,13 @@
         <div class="modal-content">
             <span class="close" onclick="closeBookModal()">&times;</span>
             <h2 id="bDModalTitle"></h2>
-            <img id="bDModalImage" src="" alt="Book Cover" style="max-width: 150px; height: auto; display: block; margin-bottom: 10px;">
-            <p id="bDModalAuthors"><strong>Author(s):</strong> <span ></span></p>
-            <p id="bDModalDescription"><strong>Description:</strong> <span ></span></p>
-            <p id="bDModalGenres"><strong>Genre(s):</strong> <span ></span></p>
-            <p id="bDModalPublishedDate"><strong>Publish Date:</strong> <span ></span></p>
-            <p id="bDModalPublishers"><strong>Publisher(s):</strong> <span ></span></p>
-            <p id="bDModalIsbn"><strong>ISBN:</strong> <span ></span></p>
+            <img id="bDModalImage" src="" alt="Book Cover" >
+            <p><strong>Author(s):</strong> <span id="bDModalAuthors"></span></p>
+            <p><strong>Description:</strong> <span id="bDModalDescription"></span></p>
+            <p><strong>Genre(s):</strong> <span id="bDModalGenres"></span></p>
+            <p><strong>Publish Date:</strong> <span id="bDModalPublishedDate"></span></p>
+            <p><strong>Publisher(s):</strong> <span id="bDModalPublishers"></span></p>
+            <p><strong>ISBN:</strong> <span id="bDModalIsbn"></span></p>
         </div>
     </div>
 
