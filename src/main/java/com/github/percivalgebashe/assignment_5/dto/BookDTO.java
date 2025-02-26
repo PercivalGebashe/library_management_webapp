@@ -19,6 +19,7 @@ public class BookDTO {
     private String isbn;
     private String genres;
     private String publishers;
+
     public void generateBookId() {
         if (authors != null && !authors.isEmpty()) {
 

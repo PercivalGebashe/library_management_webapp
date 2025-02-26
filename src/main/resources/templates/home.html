@@ -32,8 +32,15 @@
 
     <!-- Main Content Section -->
     <div class="main-content">
-        <!--        -->
+        <!--Page heading -->
         <h1>Library Management</h1>
+
+        <!-- Buttons for Adding Books and Authors (Only for Admins) -->
+        <div class="admin-actions">
+            <button id="addBookBtn">Add Book</button>
+            <button id="addAuthorBtn">Add Author</button>
+        </div>
+
         <!-- Search Section -->
         <div class="search-section">
             <!-- Basic Search -->
@@ -63,7 +70,7 @@
                     <div>Publish Date</div>
                     <div>Publisher</div>
                     <div>ISBN</div>
-                    <div th:if="${role == 'ADMIN'}">Actions</div>
+                    <div>Actions</div>
                 </div>
                 <div id="booksContainer" class="grid-body">
                     <!-- dynamically load book data -->
@@ -79,9 +86,9 @@
 </div>
 
 <!-- Edit Modal (Only for Admins) -->
-<div id="editModal" class="modal" > <!-- th:if="${role == 'ADMIN'}" -->
+<div id="editModal" class="modal" >
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close">&times;</span>
         <h2>Edit Book</h2>
         <form id="editForm">
             <label>ID:</label>
@@ -113,22 +120,74 @@
             </button>
         </form>
     </div>
+</div>
 
-    <!-- View Book Details Modal -->
-    <div id="bookDetailsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeBookModal()">&times;</span>
-            <h2 id="bDModalTitle"></h2>
-            <img id="bDModalImage" src="" alt="Book Cover" >
-            <p><strong>Author(s):</strong> <span id="bDModalAuthors"></span></p>
-            <p><strong>Description:</strong> <span id="bDModalDescription"></span></p>
-            <p><strong>Genre(s):</strong> <span id="bDModalGenres"></span></p>
-            <p><strong>Publish Date:</strong> <span id="bDModalPublishedDate"></span></p>
-            <p><strong>Publisher(s):</strong> <span id="bDModalPublishers"></span></p>
-            <p><strong>ISBN:</strong> <span id="bDModalIsbn"></span></p>
-        </div>
+
+<!-- Add New Book Modal -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Book</h2>
+        <form id="addBookForm">
+            <label>Title:</label>
+            <input type="text" id="addBookTitle" name="title" required>
+
+            <label>Author(s):</label>
+            <input type="text" id="addBookAuthors" name="authors">
+
+            <label>Description:</label>
+            <input type="text" id="addBookDescription" name="description" required>
+
+            <label>Genre(s):</label>
+            <input type="text" id="addBookGenres" name="genres" required>
+
+            <label>Publish Date:</label>
+            <input type="date" id="addBookPublishedDate" name="publishedDate" required>
+
+            <label>Publisher(s):</label>
+            <input type="text" id="addBookPublishers" name="publishers" required>
+
+            <label>ISBN:</label>
+            <input type="text" id="addBookIsbn" name="isbn" required>
+
+            <button type="submit" id="addBookSubmitBtn">Add Book</button>
+        </form>
     </div>
+</div>
 
+<!-- View Book Details Modal -->
+<div id="bookDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeBookModal()">&times;</span>
+        <h2 id="bDModalTitle"></h2>
+        <img id="bDModalImage" src="" alt="Book Cover" >
+        <p><strong>Author(s):</strong> <span id="bDModalAuthors"></span></p>
+        <p><strong>Description:</strong> <span id="bDModalDescription"></span></p>
+        <p><strong>Genre(s):</strong> <span id="bDModalGenres"></span></p>
+        <p><strong>Publish Date:</strong> <span id="bDModalPublishedDate"></span></p>
+        <p><strong>Publisher(s):</strong> <span id="bDModalPublishers"></span></p>
+        <p><strong>ISBN:</strong> <span id="bDModalIsbn"></span></p>
+    </div>
+</div>
+
+<!-- Add New Author Modal -->
+<div id="addAuthorModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeAddAuthorModal()">&times;</span>
+        <h2>Add New Author</h2>
+        <form id="addAuthorForm">
+            <label>Author Name:</label>
+            <input type="text" id="addAuthorName" name="name" required>
+
+            <label>Date of Birth:</label>
+            <input type="date" id="addAuthorDob" name="dob" required>
+
+            <label>Biography:</label>
+            <textarea id="addAuthorBio" name="bio" required></textarea>
+
+            <button type="submit" id="addAuthorSubmitBtn">Add Author</button>
+        </form>
+    </div>
 </div>
 
 <script th:type="module" th:src="@{/js/main.js?v=1.0}" th:defer></script>

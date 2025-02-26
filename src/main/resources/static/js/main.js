@@ -3,20 +3,34 @@ class BookManager {
         this.apiUrl = apiUrl;
         this.pageSize = pageSize;
 
+        document.getElementById("addBookBtn").addEventListener("click", (event) => {this.openAddBookModal(event)})
+        document.getElementById("addAuthorBtn").addEventListener("click", event => (event) =>{this.openAddAuthorModal(event)})
+
         document.addEventListener("DOMContentLoaded", () => {
             this.loadBooks();
         });
+
+        document.getElementById("filterAuthor").addEventListener("click", () => this.populateAuthorDropdown());
 
         // Close modals when clicking outside
         window.onclick = (event) => {
             let editModal = document.getElementById("editModal");
             let bookDetailsModal = document.getElementById("bookDetailsModal");
+            let addBookModal = document.getElementById("addBookModal");
+            let addAuthorModal = document.getElementById("addAuthorModal");
             if (event.target === editModal) {
                 this.closeModal(editModal);
             }
             if (event.target === bookDetailsModal) {
                 this.closeModal(bookDetailsModal);
             }
+            if (event.target === addBookModal){
+                this.closeModal(addBookModal);
+            }
+            if (event.target === addAuthorModal){
+                this.closeModal(addAuthorModal);
+            }
+
         };
     }
 
@@ -46,6 +60,7 @@ class BookManager {
                     <div>${book.publishers}</div>
                     <div>${book.isbn}</div>
                     <div><button id="editButton" class="edit-btn">Edit</button></div>
+                    <div><button id="deleteButton" class="delete-btn">Delete</button></div>
                 `;
 
                     // Row click handler for book details
@@ -56,10 +71,16 @@ class BookManager {
 
                     // Edit button click handler
                     const editBtn = row.querySelector(".edit-btn");
+                    const deleteBtn = row.querySelector(".delete-btn");
                     editBtn.addEventListener("click", (event) => {
                         event.stopPropagation();
                         this.openEditModal(book);
                     });
+
+                    deleteBtn.addEventListener("click", (event) => {
+                        event.stopPropagation();
+                        this.deleteBook(book);
+                    })
 
                     booksContainer.appendChild(row);
                 });
@@ -96,6 +117,31 @@ class BookManager {
         document.getElementById("editModalIsbn").value = book.isbn;
 
         document.getElementById("editModal").style.display = "block";
+    }
+
+    handleAddBook(event) {
+        event.preventDefault();
+        let formdata = {
+            title: document.getElementById("addBookTitle").value,
+            authors: document.getElementById("addBookAuthors").value,
+            description: document.getElementById("addBookDescription").value,
+            genres: document.getElementById("addBookGenres").value,
+            publishedDate: document.getElementById("addBookPublishedDate").value,
+            publishers: document.getElementById("addBookPublishers").value,
+            isbn: document.getElementById("addBookIsbn").value,
+        };
+
+        fetch(`${this.apiUrl}`,{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(formdata)})
+        .then(response => response.json())
+            .then(data => {
+                alert("Book Added Successfully!");
+                document.getElementById("addBookModal").style.display = "none";
+                this.loadBooks()
+            }).catch(error => console.error("Error adding book", error));
+
     }
 
     handleEditSubmit(event) {
@@ -140,6 +186,48 @@ class BookManager {
 
         document.getElementById("prevPage").addEventListener("click", () => this.loadBooks(data.number - 1));
         document.getElementById("nextPage").addEventListener("click", () => this.loadBooks(data.number + 1));
+    }
+
+    openAddBookModal(event) {
+        // event.preventDefault();
+        document.getElementById("addBookModal").style.display = "block";
+        document.getElementById("addBookForm").addEventListener("submit", (event) => {this.handleAddBook(event)})
+    }
+
+    openAddAuthorModal(event){
+        event.preventDefault();
+    }
+
+    populateAuthorDropdown() {
+        fetch(`/api/v1/library/authors`) // Replace with the actual endpoint
+            .then(response => response.json())
+            .then(authors => {
+                const authorDropdown = document.getElementById("filterAuthor");
+                authorDropdown.innerHTML = `<option value="">Select an Author</option>`; // Reset first option
+
+                authors.forEach(author => {
+                    const option = document.createElement("option");
+                    option.value = author.id; // Assuming each author has a unique ID
+                    option.textContent = author.name;
+                    authorDropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error fetching authors:", error));
+    }
+
+    deleteBook(book) {
+        alert("Deleting book " + book.id);
+        fetch(`${this.apiUrl}/book?id=${book.id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(book)})
+        .then(response => response.json())
+        .then(() => {
+            alert("Book deleted successfully!");
+            this.loadBooks()
+        })
     }
 
     handleSearch(event) {

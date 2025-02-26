@@ -17,8 +17,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.Objects;
 
 @EnableMethodSecurity
@@ -70,6 +72,33 @@ public class LibraryRestController {
         }
     }
 
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
+        try {
+            bookDTO.generateBookId();
+            WebClient client = WebClient.builder().build();
+
+            Objects.requireNonNull(client.post()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/books")
+                            .build()).contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(bookDTO)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .toEntity(BookDTO.class)
+                    .block()).getBody();
+            return ResponseEntity.ok(bookDTO);
+        }catch (HttpClientErrorException.BadRequest e){
+            return ResponseEntity.badRequest().build();
+
+        }
+
+    }
+
     @PutMapping("/book/update")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO bookDTO) {
@@ -93,6 +122,31 @@ public class LibraryRestController {
 
             return ResponseEntity.ok(book);
         }catch (NoContentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/authors")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        try {
+            System.out.println("Getting all authors");
+            WebClient webClient = WebClient.builder().build();
+
+             List<AuthorDTO> authors = Objects.requireNonNull(webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/authors")
+                            .build())
+                             .accept(MediaType.APPLICATION_JSON)
+                             .retrieve()
+                             .toEntity(new ParameterizedTypeReference<List<AuthorDTO>>() {})
+                             .block().getBody()
+                    );
+             return ResponseEntity.ok(authors);
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
@@ -140,6 +194,30 @@ public class LibraryRestController {
                     .toEntity(BookDTO.class)
                     .block()).getBody();
             return ResponseEntity.ok(bookDTO);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @DeleteMapping("/book")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<BookDTO> deleteBook(@RequestParam("id") String bookId) {
+        try {
+            WebClient client = WebClient.builder().build();
+
+            Objects.requireNonNull(client.delete()
+                    .uri(uriBuilder -> uriBuilder
+                            .scheme("http")
+                            .host("localhost")
+                            .port(8082)
+                            .path("/api/v1/books")
+                            .queryParam("bookId", bookId)
+                            .build())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .toEntity(Object.class)
+                    .block()).getBody();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

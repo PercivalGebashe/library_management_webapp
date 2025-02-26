@@ -1,5 +1,6 @@
 package com.github.percivalgebashe.assignment_5.dto;
 
+import com.github.percivalgebashe.assignment_5.util.IdGenerator;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +15,8 @@ public class AuthorDTO {
     private LocalDate birthDate;
     private List<BookDTO> books;
 
-    public void generateAuthorId() {
-        id = name.replaceAll("\\s+", "") + "_" + birthDate.getYear();
+    public void generateAuthorId(){
+
+        id = IdGenerator.generateAuthorId(name, birthDate);
     }
 }

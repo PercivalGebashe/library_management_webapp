@@ -18,6 +18,19 @@ public class IdGenerator {
         return String.format("%s-%s-%s-%s", authorInitials, titleCode, year, shortHash);
     }
 
+    public static String generateAuthorId(String authorName, LocalDate dateOfBirth) {
+        String initials = getAuthorInitials(List.of(authorName)); // Convert single name to list
+        String dob = dateOfBirth != null ? dateOfBirth.toString().replace("-", "") : "UNKNOWN";
+        String shortHash = generateShortHash(authorName + dob);
+
+        return String.format("%s-%s-%s", initials, dob, shortHash);
+    }
+
+    public static String generateUserId(String username) {
+        String shortHash = generateShortHash(username);
+        return String.format("%s-%s", username.toUpperCase(), shortHash);
+    }
+
     private static String getAuthorInitials(List<String> authorNames) {
         return authorNames.stream()
                 .map(name -> name.split(" "))
