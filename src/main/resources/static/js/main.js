@@ -130,6 +130,7 @@ class BookManager {
             publishers: document.getElementById("addBookPublishers").value,
             isbn: document.getElementById("addBookIsbn").value,
         };
+        console.log("Form Data: ", formdata);
 
         fetch(`${this.apiUrl}`,{
             method: "POST",
@@ -149,7 +150,7 @@ class BookManager {
         let formData = {
             id: document.getElementById("editModalId").value,
             title: document.getElementById("editModalTitle").value,
-            authors: document.getElementById("editModalAuthors").values,
+            authors: document.getElementById("editModalAuthors").value,
             description: document.getElementById("editModalDescription").value,
             genres: document.getElementById("editModalGenres").value,
             publishedDate: document.getElementById("editModalPublishedDate").value,
@@ -190,8 +191,8 @@ class BookManager {
 
     openAddBookModal(event) {
         // event.preventDefault();
-        document.getElementById("addBookModal").style.display = "block";
         document.getElementById("addBookForm").addEventListener("submit", (event) => {this.handleAddBook(event)})
+        document.getElementById("addBookModal").style.display = "block";
     }
 
     openAddAuthorModal(event){

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @Builder
 public class BookDTO {
     private String id;
-    private List<AuthorDTO> authors;
+    private String authors;
     private String title;
     private LocalDate publishedDate;
     private String description;
@@ -23,7 +24,7 @@ public class BookDTO {
     public void generateBookId() {
         if (authors != null && !authors.isEmpty()) {
 
-             id = IdGenerator.generateBookId(authors.stream().map(AuthorDTO::getName).toList(),title,publishedDate);
+             id = IdGenerator.generateBookId(Arrays.stream(authors.split(",")).toList(),title,publishedDate);
         }
     }
 }

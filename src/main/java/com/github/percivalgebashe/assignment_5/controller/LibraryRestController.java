@@ -77,6 +77,7 @@ public class LibraryRestController {
     public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO bookDTO) {
         try {
             bookDTO.generateBookId();
+            System.out.println(bookDTO);
             WebClient client = WebClient.builder().build();
 
             Objects.requireNonNull(client.post()
@@ -118,7 +119,7 @@ public class LibraryRestController {
                     .bodyValue(bookDTO)
                     .retrieve()
                     .toEntity(BookDTO.class)
-                    .   block()).getBody();
+                    .block()).getBody();
 
             return ResponseEntity.ok(book);
         }catch (NoContentException e) {
@@ -145,6 +146,7 @@ public class LibraryRestController {
                              .toEntity(new ParameterizedTypeReference<List<AuthorDTO>>() {})
                              .block().getBody()
                     );
+            System.out.println(authors);
              return ResponseEntity.ok(authors);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
