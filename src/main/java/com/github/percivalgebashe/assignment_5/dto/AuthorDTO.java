@@ -13,9 +13,11 @@ public class AuthorDTO {
     private String id;
     private String name;
     private LocalDate birthDate;
+    private String biography;
 
     public void generateAuthorId(){
-
-        id = IdGenerator.generateAuthorId(name, birthDate);
+        if(id == null) {
+            generateAuthorId();
+        }
     }
 }

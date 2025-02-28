@@ -155,24 +155,24 @@ public class LibraryRestController {
 
     @PostMapping(value = "/author", consumes = "application/json")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<BookDTO> addAuthor(@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<Object> addAuthor(@RequestBody AuthorDTO authorDTO) {
         try {
             WebClient client = WebClient.builder().build();
 
-            AuthorDTO authorDTO = Objects.requireNonNull(client.post()
+            AuthorDTO responseDTO = Objects.requireNonNull(client.post()
                     .uri(uriBuilder -> uriBuilder
                             .scheme("http")
                             .host("localhost")
                             .port(8082)
-                            .path("/api/v1/author")
+                            .path("/api/v1/authors/admin/add")
                             .build())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .bodyValue(bookDTO)
+                    .bodyValue(authorDTO)
                     .retrieve()
                     .toEntity(AuthorDTO.class)
                     .block()).getBody();
-            return ResponseEntity.ok(bookDTO);
+            return ResponseEntity.ok(responseDTO);
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

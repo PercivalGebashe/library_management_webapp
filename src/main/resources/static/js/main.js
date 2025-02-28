@@ -3,8 +3,8 @@ class BookManager {
         this.apiUrl = apiUrl;
         this.pageSize = pageSize;
 
-        document.getElementById("addBookBtn").addEventListener("click", (event) => {this.openAddBookModal(event)})
-        document.getElementById("addAuthorBtn").addEventListener("click", event => (event) =>{this.openAddAuthorModal(event)})
+        document.getElementById("addBookBtn").addEventListener("click", () => {this.openAddBookModal()})
+        document.getElementById("addAuthorBtn").addEventListener("click", () =>{this.openAddAuthorModal()})
 
         document.addEventListener("DOMContentLoaded", () => {
             this.loadBooks();
@@ -145,6 +145,26 @@ class BookManager {
 
     }
 
+    handleAddAuthor(event){
+        event.preventDefault();
+        let formData = {
+            name: document.getElementById("addAuthorName").value,
+            birthDate: document.getElementById("addAuthorBirthDate").value,
+            biography: document.getElementById("addAuthorBiography").value,
+        };
+
+        fetch(`${this.apiUrl}/author`,{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(formData)
+        }).then(response => response.json())
+        .then(data => {
+            alert("Author Added Successfully!");
+            document.getElementById("addAuthorModal").style.display = "none";
+            this.loadBooks()
+        }).catch(error => console.error("Error adding author", error));
+    }
+
     handleEditSubmit(event) {
         event.preventDefault();
         let formData = {
@@ -189,14 +209,18 @@ class BookManager {
         document.getElementById("nextPage").addEventListener("click", () => this.loadBooks(data.number + 1));
     }
 
-    openAddBookModal(event) {
+    openAddBookModal() {
         // event.preventDefault();
-        document.getElementById("addBookForm").addEventListener("submit", (event) => {this.handleAddBook(event)})
+        document.getElementById("addBookForm")
+            .addEventListener("submit", (event) => {this.handleAddBook(event)})
         document.getElementById("addBookModal").style.display = "block";
     }
 
-    openAddAuthorModal(event){
-        event.preventDefault();
+    openAddAuthorModal(){
+        // event.preventDefault();
+        document.getElementById("addAuthorForm")
+            .addEventListener("submit", (event) => {this.handleAddAuthor(event)})
+        document.getElementById("addAuthorModal").style.display = "block";
     }
 
     populateAuthorDropdown() {
